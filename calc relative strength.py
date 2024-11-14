@@ -27,6 +27,12 @@ def relative_strength_rating(symbols):
     price_changes = []
     
     for symbol in symbols:
+        # Sicherstellen, dass das Symbol als string behandelt wird
+        symbol = str(symbol).strip()
+        
+        if not symbol:
+            continue
+        
         stock = yf.Ticker(symbol)
         start_price, end_price, price_change = calculate_relative_strength(stock)
         
