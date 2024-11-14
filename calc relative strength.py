@@ -6,22 +6,26 @@ import os
 
 def calculate_relative_strength(stock):
     # Abrufen der historischen Daten der letzten 12 Monate
-    hist = stock.history(period="1y")
-    
-    if hist.empty:
+    try:
+        hist = stock.history(period="1y")
+        
+        if hist.empty:
+            return None, None, None
+        
+        # Berechnung des Startpreises und Endpreises
+        start_price = hist['Close'].iloc[0]
+        end_price = hist['Close'].iloc[-1]
+        
+        if pd.isna(start_price):  # Wenn der Startpreis NaN ist, zurückkehren
+            return None, None, None
+        
+        # Berechnung der prozentualen Preisänderung
+        price_change = (end_price - start_price) / start_price * 100  # in Prozent
+        
+        return start_price, end_price, price_change
+    except Exception as e:
+        print(f"Fehler beim Abrufen von {stock.ticker}: {e}")
         return None, None, None
-    
-    # Berechnung des Startpreises und Endpreises
-    start_price = hist['Close'].iloc[0]
-    end_price = hist['Close'].iloc[-1]
-    
-    if pd.isna(start_price):  # Wenn der Startpreis NaN ist, zurückkehren
-        return None, None, None
-    
-    # Berechnung der prozentualen Preisänderung
-    price_change = (end_price - start_price) / start_price * 100  # in Prozent
-    
-    return start_price, end_price, price_change
 
 def relative_strength_rating(symbols):
     price_changes = []
