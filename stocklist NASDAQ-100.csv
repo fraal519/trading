@@ -1,0 +1,102 @@
+﻿No.,Symbol,Company Name,Market Cap
+1,NVDA,NVIDIA Corporation,3620873300000
+2,AAPL,Apple Inc.,3430304073000
+3,MSFT,Microsoft Corporation,3174322016000
+4,AMZN,"Amazon.com, Inc.",2234437500000
+5,GOOG,Alphabet Inc.,2154118602196
+6,GOOGL,Alphabet Inc.,2158363642706
+7,META,"Meta Platforms, Inc.",1456830561599
+8,TSLA,"Tesla, Inc.",1028099719458
+9,AVGO,Broadcom Inc.,800794293900
+10,COST,Costco Wholesale Corporation,411017596100
+11,NFLX,"Netflix, Inc.",357949054620
+12,ASML,ASML Holding N.V.,278542877244
+13,TMUS,"T-Mobile US, Inc.",277020567900
+14,ADBE,Adobe Inc.,233301598000
+15,CSCO,"Cisco Systems, Inc.",231408391100
+16,PEP,"PepsiCo, Inc.",228038457900
+17,AMD,"Advanced Micro Devices, Inc.",226674100800
+18,LIN,Linde plc,217061385880
+19,AZN,AstraZeneca PLC,203910959000
+20,INTU,Intuit Inc.,196210005840
+21,ISRG,"Intuitive Surgical, Inc.",193081074110
+22,TXN,Texas Instruments Incorporated,187847282286
+23,QCOM,QUALCOMM Incorporated,181494959800
+24,CMCSA,Comcast Corporation,165528541500
+25,BKNG,Booking Holdings Inc.,164499369626
+26,AMGN,Amgen Inc.,159878440190
+27,PDD,PDD Holdings Inc.,153903559554
+28,AMAT,"Applied Materials, Inc.",153297923800
+29,HON,Honeywell International Inc.,150389126160
+30,ARM,Arm Holdings plc,147468924251
+31,PANW,"Palo Alto Networks, Inc.",130258988040
+32,VRTX,Vertex Pharmaceuticals Incorporated,126657912780
+33,ADP,"Automatic Data Processing, Inc.",123176288385
+34,GILD,"Gilead Sciences, Inc.",114974826500
+35,SBUX,Starbucks Corporation,112889384000
+36,MU,"Micron Technology, Inc.",109964833200
+37,INTC,Intel Corporation,109334550000
+38,ADI,"Analog Devices, Inc.",105754498479
+39,LRCX,Lam Research Corporation,96813019900
+40,MELI,"MercadoLibre, Inc.",95118461880
+41,MDLZ,"Mondelez International, Inc.",87853383000
+42,CTAS,Cintas Corporation,87459421140
+43,KLAC,KLA Corporation,86721288952
+44,PYPL,"PayPal Holdings, Inc.",86007906600
+45,CRWD,"CrowdStrike Holdings, Inc.",85263720393
+46,SNPS,"Synopsys, Inc.",85372516640
+47,REGN,"Regeneron Pharmaceuticals, Inc.",84567420720
+48,ABNB,"Airbnb, Inc.",86323184512
+49,CDNS,"Cadence Design Systems, Inc.",82930274625
+50,MRVL,"Marvell Technology, Inc.",79066736000
+51,MAR,"Marriott International, Inc.",78778497105
+52,FTNT,"Fortinet, Inc.",72750399880
+53,DASH,"DoorDash, Inc.",72600879769
+54,WDAY,"Workday, Inc.",73048921922
+55,ORLY,"O'Reilly Automotive, Inc.",71065393327
+56,CEG,Constellation Energy Corporation,71151273834
+57,CSX,CSX Corporation,68844594000
+58,ADSK,"Autodesk, Inc.",66329650000
+59,TEAM,Atlassian Corporation,65387519069
+60,CHTR,"Charter Communications, Inc.",111947872422
+61,TTD,"The Trade Desk, Inc.",62301377898
+62,ROP,"Roper Technologies, Inc.",61221389597
+63,PCAR,PACCAR Inc,61238356800
+64,NXPI,NXP Semiconductors N.V.,56633581480
+65,CPRT,"Copart, Inc.",55586737500
+66,MNST,Monster Beverage Corporation,55349133720
+67,FANG,"Diamondback Energy, Inc.",53045641630
+68,PAYX,"Paychex, Inc.",52584696780
+69,AEP,"American Electric Power Company, Inc.",50066435650
+70,ODFL,"Old Dominion Freight Line, Inc.",47932435980
+71,ROST,"Ross Stores, Inc.",47418885590
+72,FAST,Fastenal Company,47162839950
+73,KDP,Keurig Dr Pepper Inc.,45624195750
+74,DDOG,"Datadog, Inc.",44917336363
+75,EA,Electronic Arts Inc.,42974742415
+76,BKR,Baker Hughes Company,42464716669
+77,LULU,Lululemon Athletica Inc.,42347139044
+78,VRSK,"Verisk Analytics, Inc.",40687831485
+79,CTSH,Cognizant Technology Solutions Corporation,40241075840
+80,XEL,Xcel Energy Inc.,39846594956
+81,KHC,The Kraft Heinz Company,38439514300
+82,EXC,Exelon Corporation,38304119600
+83,GEHC,GE HealthCare Technologies Inc.,37861065510
+84,CCEP,Coca-Cola Europacific Partners PLC,36479877280
+85,MCHP,Microchip Technology Incorporated,35448030100
+86,IDXX,"IDEXX Laboratories, Inc.",34906628763
+87,TTWO,"Take-Two Interactive Software, Inc.",31767411760
+88,ZS,"Zscaler, Inc.",31968003600
+89,CSGP,"CoStar Group, Inc.",30763323360
+90,ANSS,"ANSYS, Inc.",29870515948
+91,DXCM,"DexCom, Inc.",28916372802
+92,ON,ON Semiconductor Corporation,28481561330
+93,WBD,"Warner Bros. Discovery, Inc.",24151458650
+94,CDW,CDW Corporation,24219399360
+95,BIIB,Biogen Inc.,24293951098
+96,GFS,GlobalFoundries Inc.,23747849438
+97,ILMN,"Illumina, Inc.",22667112000
+98,MDB,"MongoDB, Inc.",21941088238
+99,MRNA,"Moderna, Inc.",15964174730
+100,DLTR,"Dollar Tree, Inc.",14238920160
+101,WBA,"Walgreens Boots Alliance, Inc.",7673475875

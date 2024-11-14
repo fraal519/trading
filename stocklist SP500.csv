@@ -1,0 +1,504 @@
+﻿No.,Symbol,Company Name,Market Cap
+1,NVDA,NVIDIA Corporation,3620873300000
+2,AAPL,Apple Inc.,3430304073000
+3,MSFT,Microsoft Corporation,3174322016000
+4,AMZN,"Amazon.com, Inc.",2234437500000
+5,GOOG,Alphabet Inc.,2154118602196
+6,GOOGL,Alphabet Inc.,2158363642706
+7,META,"Meta Platforms, Inc.",1456830561599
+8,BRK.B,Berkshire Hathaway Inc.,1009471651840
+9,TSLA,"Tesla, Inc.",1028099719458
+10,AVGO,Broadcom Inc.,800794293900
+11,LLY,Eli Lilly and Company,754150870140
+12,JPM,JPMorgan Chase & Co.,685577520100
+13,WMT,Walmart Inc.,685743107500
+14,V,Visa Inc.,592679377734
+15,UNH,UnitedHealth Group Incorporated,544766715220
+16,XOM,Exxon Mobil Corporation,529959952200
+17,ORCL,Oracle Corporation,520911063556
+18,MA,Mastercard Incorporated,474145820800
+19,COST,Costco Wholesale Corporation,411017596100
+20,HD,"The Home Depot, Inc.",408640740200
+21,PG,The Procter & Gamble Company,394704704000
+22,JNJ,Johnson & Johnson,365621173200
+23,NFLX,"Netflix, Inc.",357949054620
+24,BAC,Bank of America Corporation,351878276800
+25,CRM,"Salesforce, Inc.",320105988400
+26,ABBV,AbbVie Inc.,299848315200
+27,CVX,Chevron Corporation,290373802200
+28,TMUS,"T-Mobile US, Inc.",277020567900
+29,KO,The Coca-Cola Company,269517507000
+30,MRK,"Merck & Co., Inc.",250598786600
+31,WFC,Wells Fargo & Company,242603288850
+32,ADBE,Adobe Inc.,233301598000
+33,CSCO,"Cisco Systems, Inc.",231408391100
+34,PEP,"PepsiCo, Inc.",228038457900
+35,ACN,Accenture plc,228609816160
+36,AMD,"Advanced Micro Devices, Inc.",226674100800
+37,BX,Blackstone Inc.,225378372553
+38,LIN,Linde plc,217061385880
+39,NOW,"ServiceNow, Inc.",213789890000
+40,MCD,McDonald's Corporation,214237132100
+41,MS,Morgan Stanley,213406413600
+42,TMO,Thermo Fisher Scientific Inc.,205290504000
+43,AXP,American Express Company,204232623956
+44,ABT,Abbott Laboratories,200468886800
+45,PM,Philip Morris International Inc.,197136895700
+46,DIS,The Walt Disney Company,198687852450
+47,INTU,Intuit Inc.,196210005840
+48,GS,"The Goldman Sachs Group, Inc.",184736035000
+49,IBM,International Business Machines Corporation,191715894300
+50,GE,General Electric Company,194292700800
+51,ISRG,"Intuitive Surgical, Inc.",193081074110
+52,TXN,Texas Instruments Incorporated,187847282286
+53,CAT,Caterpillar Inc.,187873131390
+54,QCOM,QUALCOMM Incorporated,181494959800
+55,DHR,Danaher Corporation,173020976250
+56,VZ,Verizon Communications Inc.,172763215200
+57,CMCSA,Comcast Corporation,165528541500
+58,BKNG,Booking Holdings Inc.,164499369626
+59,BLK,"BlackRock, Inc.",162283764990
+60,T,AT&T Inc.,160331855050
+61,AMGN,Amgen Inc.,159878440190
+62,RTX,RTX Corporation,158244967800
+63,SPGI,S&P Global Inc.,158903078500
+64,NEE,"NextEra Energy, Inc.",154158026000
+65,LOW,"Lowe's Companies, Inc.",154213200960
+66,AMAT,"Applied Materials, Inc.",153297923800
+67,PGR,The Progressive Corporation,150568329300
+68,UBER,"Uber Technologies, Inc.",151842748100
+69,HON,Honeywell International Inc.,150389126160
+70,PFE,Pfizer Inc.,149988791029
+71,SCHW,The Charles Schwab Corporation,143946933600
+72,SYK,Stryker Corporation,148979212800
+73,ETN,Eaton Corporation plc,144006928000
+74,UNP,Union Pacific Corporation,143549532460
+75,TJX,"The TJX Companies, Inc.",136607614400
+76,PLTR,Palantir Technologies Inc.,130341593735
+77,KKR,KKR & Co. Inc.,134628869530
+78,COP,ConocoPhillips,128729283500
+79,BSX,Boston Scientific Corporation,130522384800
+80,PANW,"Palo Alto Networks, Inc.",130258988040
+81,C,Citigroup Inc.,128870456400
+82,LMT,Lockheed Martin Corporation,128579635750
+83,VRTX,Vertex Pharmaceuticals Incorporated,126657912780
+84,ADP,"Automatic Data Processing, Inc.",123176288385
+85,ANET,"Arista Networks, Inc.",122111271100
+86,FI,"Fiserv, Inc.",120118713065
+87,BMY,Bristol-Myers Squibb Company,118879945338
+88,CB,Chubb Limited,114377686967
+89,GILD,"Gilead Sciences, Inc.",114974826500
+90,UPS,"United Parcel Service, Inc.",113359171061
+91,NKE,"NIKE, Inc.",113881505293
+92,SBUX,Starbucks Corporation,112889384000
+93,MDT,Medtronic plc,111515711725
+94,MU,"Micron Technology, Inc.",109964833200
+95,MMC,"Marsh & McLennan Companies, Inc.",109282011830
+96,PLD,"Prologis, Inc.",106982474250
+97,DE,Deere & Company,107754624000
+98,INTC,Intel Corporation,109334550000
+99,ADI,"Analog Devices, Inc.",105754498479
+100,BA,The Boeing Company,105468022080
+101,SHW,The Sherwin-Williams Company,97736593710
+102,LRCX,Lam Research Corporation,96813019900
+103,SO,The Southern Company,95641907200
+104,ELV,"Elevance Health, Inc.",95596341370
+105,DELL,Dell Technologies Inc.,97924493347
+106,MO,"Altria Group, Inc.",93505209915
+107,TT,Trane Technologies plc,92573748480
+108,AMT,American Tower Corporation,91612008450
+109,CI,The Cigna Group,90189719485
+110,GEV,GE Vernova Inc.,90731178367
+111,ICE,"Intercontinental Exchange, Inc.",89827120765
+112,PH,Parker-Hannifin Corporation,89973992800
+113,WM,"Waste Management, Inc.",89578910847
+114,MDLZ,"Mondelez International, Inc.",87853383000
+115,CTAS,Cintas Corporation,87459421140
+116,HCA,"HCA Healthcare, Inc.",88703342915
+117,APH,Amphenol Corporation,87792520200
+118,MCO,Moody's Corporation,87550404000
+119,EQIX,"Equinix, Inc.",86690788172
+120,KLAC,KLA Corporation,86721288952
+121,PYPL,"PayPal Holdings, Inc.",86007906600
+122,DUK,Duke Energy Corporation,85896135990
+123,CRWD,"CrowdStrike Holdings, Inc.",85263720393
+124,SNPS,"Synopsys, Inc.",85372516640
+125,REGN,"Regeneron Pharmaceuticals, Inc.",84567420720
+126,ABNB,"Airbnb, Inc.",86323184512
+127,WELL,Welltower Inc.,83234972300
+128,CDNS,"Cadence Design Systems, Inc.",82930274625
+129,PNC,"The PNC Financial Services Group, Inc.",82524912255
+130,MSI,"Motorola Solutions, Inc.",82432433250
+131,CMG,"Chipotle Mexican Grill, Inc.",82136922307
+132,AON,Aon plc,82488177720
+133,CME,CME Group Inc.,81157985720
+134,GD,General Dynamics Corporation,80662156150
+135,ITW,Illinois Tool Works Inc.,79868314500
+136,ZTS,Zoetis Inc.,78976433250
+137,USB,U.S. Bancorp,78906317400
+138,MAR,"Marriott International, Inc.",78778497105
+139,MCK,McKesson Corporation,78295322600
+140,EOG,"EOG Resources, Inc.",75368300000
+141,CL,Colgate-Palmolive Company,74617614630
+142,EMR,Emerson Electric Co.,74336460000
+143,NOC,Northrop Grumman Corporation,72891208500
+144,FTNT,"Fortinet, Inc.",72750399880
+145,MMM,3M Company,72224860170
+146,TDG,TransDigm Group Incorporated,74738068233
+147,FDX,FedEx Corporation,71909145360
+148,TGT,Target Corporation,71469119500
+149,ORLY,"O'Reilly Automotive, Inc.",71065393327
+150,CEG,Constellation Energy Corporation,71151273834
+151,APD,"Air Products and Chemicals, Inc.",70231531650
+152,ECL,Ecolab Inc.,70180285890
+153,COF,Capital One Financial Corporation,70091017200
+154,CVS,CVS Health Corporation,69036372600
+155,CSX,CSX Corporation,68844594000
+156,WMB,"The Williams Companies, Inc.",67652007475
+157,CARR,Carrier Global Corporation,67911111630
+158,SPG,"Simon Property Group, Inc.",58731944900
+159,ADSK,"Autodesk, Inc.",66329650000
+160,BDX,"Becton, Dickinson and Company",65418875860
+161,RSG,"Republic Services, Inc.",65760354240
+162,AJG,Arthur J. Gallagher & Co.,64659374000
+163,GM,General Motors Company,64953372000
+164,OKE,"ONEOK, Inc.",63015928080
+165,CHTR,"Charter Communications, Inc.",111947872422
+166,RCL,Royal Caribbean Cruises Ltd.,62892551250
+167,FCX,Freeport-McMoRan Inc.,60298000000
+168,TFC,Truist Financial Corporation,61470813600
+169,SLB,Schlumberger Limited,60941333250
+170,HLT,Hilton Worldwide Holdings Inc.,61734847200
+171,AFL,Aflac Incorporated,60991419120
+172,ROP,"Roper Technologies, Inc.",61221389597
+173,PCAR,PACCAR Inc,61238356800
+174,DLR,"Digital Realty Trust, Inc.",59048231130
+175,NSC,Norfolk Southern Corporation,59899302400
+176,KMI,"Kinder Morgan, Inc.",59791663812
+177,PSA,Public Storage,58054236988
+178,TRV,"The Travelers Companies, Inc.",58345018095
+179,SRE,Sempra,57918004560
+180,GWW,"W.W. Grainger, Inc.",57254877132
+181,MET,"MetLife, Inc.",57131574200
+182,NXPI,NXP Semiconductors N.V.,56633581480
+183,JCI,Johnson Controls International plc,57055075740
+184,FICO,Fair Isaac Corporation,57181043150
+185,BK,The Bank of New York Mellon Corporation,56377628120
+186,URI,"United Rentals, Inc.",55334776352
+187,CPRT,"Copart, Inc.",55586737500
+188,AMP,"Ameriprise Financial, Inc.",54574108011
+189,MNST,Monster Beverage Corporation,55349133720
+190,PSX,Phillips 66,53589452640
+191,FANG,"Diamondback Energy, Inc.",53045641630
+192,DHI,"D.R. Horton, Inc.",53491752600
+193,AZO,"AutoZone, Inc.",53449199041
+194,PAYX,"Paychex, Inc.",52584696780
+195,ALL,The Allstate Corporation,51803410890
+196,MPC,Marathon Petroleum Corporation,51136203790
+197,AEP,"American Electric Power Company, Inc.",50066435650
+198,CMI,Cummins Inc.,49845079700
+199,O,Realty Income Corporation,49064328660
+200,PWR,"Quanta Services, Inc.",48187199340
+201,COR,"Cencora, Inc.",49255838590
+202,ODFL,"Old Dominion Freight Line, Inc.",47932435980
+203,FIS,"Fidelity National Information Services, Inc.",47768150420
+204,OXY,Occidental Petroleum Corporation,45593237520
+205,MSCI,MSCI Inc.,47860569197
+206,AIG,"American International Group, Inc.",47131985640
+207,ROST,"Ross Stores, Inc.",47418885590
+208,D,"Dominion Energy, Inc.",47840669525
+209,VST,Vistra Corp.,49013305519
+210,FAST,Fastenal Company,47162839950
+211,LHX,"L3Harris Technologies, Inc.",47188450060
+212,NEM,Newmont Corporation,46369068500
+213,AXON,"Axon Enterprise, Inc.",45890226446
+214,LEN,Lennar Corporation,45630001432
+215,HWM,Howmet Aerospace Inc.,45761239040
+216,TEL,TE Connectivity plc,46843035470
+217,KDP,Keurig Dr Pepper Inc.,45624195750
+218,KVUE,Kenvue Inc.,44969272317
+219,NDAQ,"Nasdaq, Inc.",45371396520
+220,PCG,PG&E Corporation,45217966300
+221,AME,"AMETEK, Inc.",44642444000
+222,PRU,"Prudential Financial, Inc.",44681417600
+223,CCI,Crown Castle Inc.,44980893000
+224,HES,Hess Corporation,44365910820
+225,VLO,Valero Energy Corporation,44160441650
+226,F,Ford Motor Company,43562390400
+227,STZ,"Constellation Brands, Inc.",44295691680
+228,KMB,Kimberly-Clark Corporation,43916639650
+229,DFS,Discover Financial Services,43591120640
+230,PEG,Public Service Enterprise Group Incorporated,43350557250
+231,EA,Electronic Arts Inc.,42974742415
+232,KR,The Kroger Co.,42743552880
+233,BKR,Baker Hughes Company,42464716669
+234,TRGP,Targa Resources Corp.,41804857730
+235,DAL,"Delta Air Lines, Inc.",42046509960
+236,IR,Ingersoll Rand Inc.,41631139600
+237,IT,"Gartner, Inc.",41487454598
+238,GRMN,Garmin Ltd.,40766907500
+239,LULU,Lululemon Athletica Inc.,42347139044
+240,VRSK,"Verisk Analytics, Inc.",40687831485
+241,GLW,Corning Incorporated,40455875250
+242,CTSH,Cognizant Technology Solutions Corporation,40241075840
+243,OTIS,Otis Worldwide Corporation,39834250920
+244,CBRE,"CBRE Group, Inc.",41079856320
+245,XEL,Xcel Energy Inc.,39846594956
+246,CTVA,"Corteva, Inc.",39534467946
+247,EW,Edwards Lifesciences Corporation,39546090000
+248,KHC,The Kraft Heinz Company,38439514300
+249,EXC,Exelon Corporation,38304119600
+250,YUM,"Yum! Brands, Inc.",38040304320
+251,GEHC,GE HealthCare Technologies Inc.,37861065510
+252,ACGL,Arch Capital Group Ltd.,37917668760
+253,A,"Agilent Technologies, Inc.",38006311200
+254,VMC,Vulcan Materials Company,37638045305
+255,IQV,IQVIA Holdings Inc.,37256505000
+256,SYY,Sysco Corporation,37190327479
+257,HSY,The Hershey Company,36213454021
+258,EXR,Extra Space Storage Inc.,34500396000
+259,MLM,"Martin Marietta Materials, Inc.",36366491862
+260,GIS,"General Mills, Inc.",36213021570
+261,MTB,M&T Bank Corporation,35227931918
+262,MCHP,Microchip Technology Incorporated,35448030100
+263,LVS,Las Vegas Sands Corp.,35029631190
+264,HPQ,HP Inc.,35517826890
+265,DD,"DuPont de Nemours, Inc.",34947307325
+266,IDXX,"IDEXX Laboratories, Inc.",34906628763
+267,WAB,Westinghouse Air Brake Technologies Corporation,33742007000
+268,NUE,Nucor Corporation,34911527214
+269,HUM,Humana Inc.,34147355490
+270,RMD,ResMed Inc.,34145483580
+271,HIG,"The Hartford Financial Services Group, Inc.",33846223705
+272,IRM,Iron Mountain Incorporated,33222606600
+273,VICI,VICI Properties Inc.,32858478900
+274,ED,"Consolidated Edison, Inc.",33068489520
+275,RJF,"Raymond James Financial, Inc.",32406020000
+276,EFX,Equifax Inc.,33133609120
+277,AVB,"AvalonBay Communities, Inc.",32415520810
+278,ROK,"Rockwell Automation, Inc.",32583183720
+279,TTWO,"Take-Two Interactive Software, Inc.",31767411760
+280,EIX,Edison International,31808244000
+281,WTW,Willis Towers Watson Public Limited Company,31908672750
+282,FITB,Fifth Third Bancorp,31837381640
+283,CCL,Carnival Corporation & plc,30627918079
+284,ETR,Entergy Corporation,31526552320
+285,DOW,Dow Inc.,31283611020
+286,BRO,"Brown & Brown, Inc.",31320979740
+287,CSGP,"CoStar Group, Inc.",30763323360
+288,WEC,"WEC Energy Group, Inc.",30542396930
+289,UAL,"United Airlines Holdings, Inc.",30361503444
+290,EBAY,eBay Inc.,30035695000
+291,LYV,"Live Nation Entertainment, Inc.",29455496910
+292,ANSS,"ANSYS, Inc.",29870515948
+293,CNC,Centene Corporation,30183354025
+294,TSCO,Tractor Supply Company,29973681450
+295,GPN,Global Payments Inc.,29635942750
+296,XYL,Xylem Inc.,29679375925
+297,CAH,"Cardinal Health, Inc.",30009364000
+298,DXCM,"DexCom, Inc.",28916372802
+299,PPG,"PPG Industries, Inc.",28607920000
+300,EQR,Equity Residential,28125174625
+301,ON,ON Semiconductor Corporation,28481561330
+302,MPWR,"Monolithic Power Systems, Inc.",28921662000
+303,NVR,"NVR, Inc.",28217139887
+304,K,Kellanova,27925708470
+305,DOV,Dover Corporation,27918572000
+306,HPE,Hewlett Packard Enterprise Company,27953871750
+307,STT,State Street Corporation,27891851895
+308,DECK,Deckers Outdoor Corporation,27010212380
+309,VTR,"Ventas, Inc.",27679307672
+310,LYB,LyondellBasell Industries N.V.,26813561705
+311,KEYS,"Keysight Technologies, Inc.",26744711730
+312,TROW,"T. Rowe Price Group, Inc.",26615758995
+313,BR,"Broadridge Financial Solutions, Inc.",26599260840
+314,PHM,"PulteGroup, Inc.",26793963300
+315,HAL,Halliburton Company,26526367890
+316,CHD,"Church & Dwight Co., Inc.",26356884840
+317,TYL,"Tyler Technologies, Inc.",26321566986
+318,FTV,Fortive Corporation,26354246040
+319,MTD,Mettler-Toledo International Inc.,26493213978
+320,SW,Smurfit Westrock Plc,26257974235
+321,GDDY,GoDaddy Inc.,25960401765
+322,DVN,Devon Energy Corporation,25645376000
+323,CPAY,"Corpay, Inc.",25614528030
+324,AWK,"American Water Works Company, Inc.",25924799880
+325,EQT,EQT Corporation,25579843251
+326,VLTO,Veralto Corporation,25512269553
+327,HBAN,Huntington Bancshares Incorporated,25453231200
+328,SYF,Synchrony Financial,25317093600
+329,ADM,Archer-Daniels-Midland Company,24920761040
+330,DTE,DTE Energy Company,24895611210
+331,PPL,PPL Corporation,24659267550
+332,WST,"West Pharmaceutical Services, Inc.",24569989498
+333,ROL,"Rollins, Inc.",24418658100
+334,WBD,"Warner Bros. Discovery, Inc.",24151458650
+335,NTAP,"NetApp, Inc.",24181800555
+336,CDW,CDW Corporation,24219399360
+337,BIIB,Biogen Inc.,24293951098
+338,AEE,Ameren Corporation,23940772320
+339,RF,Regions Financial Corporation,23866768640
+340,HUBB,Hubbell Incorporated,23882835795
+341,FE,FirstEnergy Corp.,23703918210
+342,SBAC,SBA Communications Corporation,23490549810
+343,EXPE,"Expedia Group, Inc.",22857547440
+344,CINF,Cincinnati Financial Corporation,23368310925
+345,EL,The Estée Lauder Companies Inc.,23063088388
+346,PTC,PTC Inc.,23337425100
+347,IFF,International Flavors & Fragrances Inc.,22955129960
+348,TSN,"Tyson Foods, Inc.",22164580808
+349,WRB,W. R. Berkley Corporation,22696469640
+350,ES,Eversource Energy,22650971640
+351,WY,Weyerhaeuser Company,22418687610
+352,LDOS,"Leidos Holdings, Inc.",22412073845
+353,ATO,Atmos Energy Corporation,22572430530
+354,WAT,Waters Corporation,22397890164
+355,TDY,Teledyne Technologies Incorporated,22267743998
+356,WDC,Western Digital Corporation,21734661960
+357,STE,STERIS plc,21913514137
+358,FOXA,Fox Corporation,20879898737
+359,ZBH,"Zimmer Biomet Holdings, Inc.",22025547360
+360,ERIE,Erie Indemnity Company,18867323568
+361,PKG,Packaging Corporation of America,21144114681
+362,NTRS,Northern Trust Corporation,21139949700
+363,STLD,"Steel Dynamics, Inc.",21570016370
+364,FSLR,"First Solar, Inc.",19729183530
+365,BLDR,"Builders FirstSource, Inc.",20924754700
+366,CBOE,"Cboe Global Markets, Inc.",20809483080
+367,STX,Seagate Technology Holdings plc,20757438900
+368,INVH,Invitation Homes Inc.,20549834725
+369,FOX,Fox Corporation,20868230118
+370,CFG,"Citizens Financial Group, Inc.",20457340420
+371,CLX,The Clorox Company,20425325616
+372,OMC,Omnicom Group Inc.,20387218500
+373,ZBRA,Zebra Technologies Corporation,20299051100
+374,ESS,"Essex Property Trust, Inc.",19634363925
+375,CMS,CMS Energy Corporation,20302440750
+376,MKC,"McCormick & Company, Incorporated",20222588662
+377,LH,Labcorp Holdings Inc.,19925390439
+378,COO,"The Cooper Companies, Inc.",20195414180
+379,DRI,"Darden Restaurants, Inc.",19859850000
+380,IP,International Paper Company,19562544480
+381,PFG,"Principal Financial Group, Inc.",19839693240
+382,BBY,"Best Buy Co., Inc.",19758887138
+383,CNP,"CenterPoint Energy, Inc.",19825535340
+384,LUV,Southwest Airlines Co.,19449290989
+385,BF.B,Brown-Forman Corporation,19013189632
+386,KEY,KeyCorp,18958287375
+387,ARE,"Alexandria Real Estate Equities, Inc.",19078767540
+388,MAA,"Mid-America Apartment Communities, Inc.",18532492800
+389,FDS,FactSet Research Systems Inc.,18826109616
+390,SNA,Snap-on Incorporated,18814976642
+391,CTRA,Coterra Energy Inc.,18684188745
+392,JBHT,"J.B. Hunt Transport Services, Inc.",18604142931
+393,NRG,"NRG Energy, Inc.",19290338600
+394,GEN,Gen Digital Inc.,18800414550
+395,BALL,Ball Corporation,18496443480
+396,PODD,Insulet Corporation,18338007870
+397,ULTA,"Ulta Beauty, Inc.",18178264701
+398,L,Loews Corporation,18090735390
+399,HOLX,"Hologic, Inc.",18293742720
+400,VRSN,"VeriSign, Inc.",17745826000
+401,DGX,Quest Diagnostics Incorporated,17651912250
+402,MOH,"Molina Healthcare, Inc.",17503200000
+403,PNR,Pentair plc,17510355225
+404,J,Jacobs Solutions Inc.,17669929320
+405,IEX,IDEX Corporation,17423931330
+406,TER,"Teradyne, Inc.",17444041710
+407,TRMB,Trimble Inc.,17404704160
+408,GPC,Genuine Parts Company,17326666320
+409,MAS,Masco Corporation,17084084565
+410,DG,Dollar General Corporation,17169863625
+411,NWS,News Corporation,17001436231
+412,EXPD,"Expeditors International of Washington, Inc.",16727132000
+413,NI,NiSource Inc.,16958081070
+414,KIM,Kimco Realty Corporation,16649800700
+415,HRL,Hormel Foods Corporation,16714134720
+416,UDR,"UDR, Inc.",14793756600
+417,NWSA,News Corporation,17030457562
+418,ALGN,"Align Technology, Inc.",16475939170
+419,BAX,Baxter International Inc.,16159888150
+420,MRO,Marathon Oil Corporation,16038284700
+421,AVY,Avery Dennison Corporation,16073297320
+422,TXT,Textron Inc.,16062241150
+423,EG,"Everest Group, Ltd.",15810537582
+424,MRNA,"Moderna, Inc.",15964174730
+425,LNT,Alliant Energy Corporation,15331790250
+426,DOC,"Healthpeak Properties, Inc.",14989063490
+427,VTRS,Viatris Inc.,15176496850
+428,DPZ,"Domino's Pizza, Inc.",15190972120
+429,INCY,Incyte Corporation,15250174000
+430,CF,"CF Industries Holdings, Inc.",14877839900
+431,NDSN,Nordson Corporation,14706509985
+432,AMCR,Amcor plc,14756921400
+433,JBL,Jabil Inc.,14561486406
+434,EVRG,"Evergy, Inc.",14430994000
+435,RVTY,"Revvity, Inc.",14220878700
+436,DLTR,"Dollar Tree, Inc.",14238920160
+437,FFIV,"F5, Inc.",14107739020
+438,BXP,"BXP, Inc.",12625163350
+439,EPAM,"EPAM Systems, Inc.",13853850277
+440,POOL,Pool Corporation,13641374530
+441,TPR,"Tapestry, Inc.",13627945280
+442,SWKS,"Skyworks Solutions, Inc.",13232774060
+443,REG,Regency Centers Corporation,13405959300
+444,AKAM,"Akamai Technologies, Inc.",13431264640
+445,UHS,"Universal Health Services, Inc.",12064461332
+446,SWK,"Stanley Black & Decker, Inc.",13164063960
+447,CPB,Campbell Soup Company,13359982240
+448,CHRW,"C.H. Robinson Worldwide, Inc.",13177493400
+449,RL,Ralph Lauren Corporation,13143350418
+450,CAG,"Conagra Brands, Inc.",13165575705
+451,CPT,Camden Property Trust,12971342790
+452,TAP,Molson Coors Beverage Company,12986613832
+453,JNPR,"Juniper Networks, Inc.",12715473045
+454,APTV,Aptiv PLC,13060950520
+455,DVA,DaVita Inc.,12822340000
+456,JKHY,"Jack Henry & Associates, Inc.",12575699391
+457,PAYC,"Paycom Software, Inc.",12970496046
+458,BG,Bunge Global SA,12116831060
+459,ALLE,Allegion plc,12259639179
+460,HST,"Host Hotels & Resorts, Inc.",12412114800
+461,KMX,"CarMax, Inc.",12198715760
+462,DAY,Dayforce Inc.,12166555000
+463,ALB,Albemarle Corporation,12448661400
+464,SJM,The J. M. Smucker Company,11832879230
+465,NCLH,Norwegian Cruise Line Holdings Ltd.,11731409440
+466,SOLV,Solventum Corporation,11794406191
+467,EMN,Eastman Chemical Company,11658587497
+468,TECH,Bio-Techne Corporation,11773897200
+469,LW,"Lamb Weston Holdings, Inc.",11516214480
+470,BEN,"Franklin Resources, Inc.",11409201370
+471,MGM,MGM Resorts International,11251594600
+472,GNRC,Generac Holdings Inc.,11366364192
+473,AIZ,"Assurant, Inc.",11013456276
+474,IPG,"The Interpublic Group of Companies, Inc.",10880987890
+475,CTLT,"Catalent, Inc.",10760575896
+476,AOS,A. O. Smith Corporation,10696369622
+477,SMCI,"Super Micro Computer, Inc.",10903220300
+478,PNW,Pinnacle West Capital Corporation,10395022500
+479,WYNN,"Wynn Resorts, Limited",10217187600
+480,CRL,"Charles River Laboratories International, Inc.",10230819534
+481,LKQ,LKQ Corporation,10099445961
+482,MKTX,MarketAxess Holdings Inc.,10117787218
+483,AES,The AES Corporation,9776621250
+484,FRT,Federal Realty Investment Trust,9675286888
+485,GL,Globe Life Inc.,9266699589
+486,TFX,Teleflex Incorporated,8907669442
+487,MHK,"Mohawk Industries, Inc.",8858443242
+488,HAS,"Hasbro, Inc.",8784377970
+489,ENPH,"Enphase Energy, Inc.",8609018040
+490,APA,APA Corporation,8199875255
+491,MOS,The Mosaic Company,8290960760
+492,HSIC,"Henry Schein, Inc.",8363601480
+493,CZR,"Caesars Entertainment, Inc.",8339840000
+494,CE,Celanese Corporation,8061497920
+495,IVZ,Invesco Ltd.,7959582400
+496,MTCH,"Match Group, Inc.",8103060869
+497,HII,"Huntington Ingalls Industries, Inc.",7683057690
+498,WBA,"Walgreens Boots Alliance, Inc.",7673475875
+499,PARA,Paramount Global,7892606653
+500,BWA,BorgWarner Inc.,7529841000
+501,FMC,FMC Corporation,6957110280
+502,AMTM,"Amentum Holdings, Inc.",6846277880
+503,QRVO,"Qorvo, Inc.",6270901278
