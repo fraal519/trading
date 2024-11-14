@@ -61,8 +61,8 @@ current_date = datetime.now().strftime("%Y%m%d")
 
 # Speichern der Ergebnisse in einer CSV-Datei mit aktuellem Datum im Dateinamen
 output_file_path = f"C:\\Users\\Q274152\\Downloads\\RS_SP500_{current_date}.csv"
-df_output = pd.DataFrame(relative_strengths, columns=['Symbol', 'Startpreis', 'Endpreis', 'Preisänderung (%)', 'Relative Strength Rating'])
-df_output = df_output.round({'Startpreis': 2, 'Endpreis': 2, 'Preisänderung (%)': 2})
+df_output = pd.DataFrame(relative_strengths, columns=['Symbol', 'Startpreis', 'Endpreis', 'Preisaenderung (%)', 'Relative Strength Rating'])
+df_output = df_output.round({'Startpreis': 2, 'Endpreis': 2, 'Preisaenderung (%)': 2})
 df_output.to_csv(output_file_path, index=False, sep=';')
 
 print(f"Die Ergebnisse wurden in der Datei {output_file_path} gespeichert.")
