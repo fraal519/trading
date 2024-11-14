@@ -42,9 +42,9 @@ def relative_strength_rating(symbols):
     
     return relative_strengths
 
-# Einlesen der Liste der Aktien aus der CSV-Datei
-file_path = "C:\\Users\\Q274152\\Downloads\\sp500_companies.csv"
-df = pd.read_csv(file_path)
+# Einlesen der Liste der Aktien aus der Excel-Datei
+file_path = "C:\\Users\\Q274152\\Downloads\\sp-500-stocks-stocks.xlsx"
+df = pd.read_excel(file_path)
 
 # Annahme: Die Symbole befinden sich in einer Spalte namens 'Symbol'
 symbols = df['Symbol'].tolist()
@@ -59,10 +59,10 @@ for symbol, start_price, end_price, price_change, rs_rating in relative_strength
 # Aktuelles Datum im Format YYYYMMDD
 current_date = datetime.now().strftime("%Y%m%d")
 
-# Speichern der Ergebnisse in einer CSV-Datei mit aktuellem Datum im Dateinamen
-output_file_path = f"C:\\Users\\Q274152\\Downloads\\RS_SP500_{current_date}.csv"
+# Speichern der Ergebnisse in einer Excel-Datei mit aktuellem Datum im Dateinamen
+output_file_path = f"C:\\Users\\Q274152\\Downloads\\RS_SP500_{current_date}.xlsx"
 df_output = pd.DataFrame(relative_strengths, columns=['Symbol', 'Startpreis', 'Endpreis', 'Preisaenderung (%)', 'Relative Strength Rating'])
 df_output = df_output.round({'Startpreis': 2, 'Endpreis': 2, 'Preisaenderung (%)': 2})
-df_output.to_csv(output_file_path, index=False, sep=';')
+df_output.to_excel(output_file_path, index=False)
 
 print(f"Die Ergebnisse wurden in der Datei {output_file_path} gespeichert.")
