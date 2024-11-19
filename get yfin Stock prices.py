@@ -5,6 +5,7 @@ import os
 import time
 from requests import Session
 
+
 # Definieren der LimiterSession Klasse
 class LimiterSession(Session):
     def __init__(self, rate_limit=5, interval=5):
