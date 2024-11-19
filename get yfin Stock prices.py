@@ -4,20 +4,32 @@ from datetime import datetime, timedelta
 import os
 import time
 from requests import Session
-from requests_cache import CacheMixin, SQLiteCache
-from requests_ratelimiter import LimiterMixin, MemoryQueueBucket
-from pyrate_limiter import Duration, RequestRate, Limiter
 
-# Definieren der CachedLimiterSession Klasse
-class CachedLimiterSession(CacheMixin, LimiterMixin, Session):
-    pass
+# Definieren der LimiterSession Klasse
+class LimiterSession(Session):
+    def __init__(self, rate_limit=5, interval=5):
+        super().__init__()
+        self.rate_limit = rate_limit
+        self.interval = interval
+        self.requests_count = 0
+        self.start_time = time.time()
 
-# Initialisieren der Session mit Rate-Limiting und Caching
-session = CachedLimiterSession(
-    limiter=Limiter(RequestRate(5, Duration.SECOND * 5)),  # max 2 requests per 5 seconds
-    bucket_class=MemoryQueueBucket,
-    backend=SQLiteCache("yfinance.cache"),
-)
+    def request(self, *args, **kwargs):
+        current_time = time.time()
+        elapsed = current_time - self.start_time
+        if self.requests_count >= self.rate_limit and elapsed < self.interval:
+            sleep_time = self.interval - elapsed
+            time.sleep(sleep_time)
+            self.start_time = time.time()
+            self.requests_count = 0
+        elif elapsed >= self.interval:
+            self.start_time = time.time()
+            self.requests_count = 0
+        self.requests_count += 1
+        return super().request(*args, **kwargs)
+
+# Initialisieren der Session mit Rate-Limiting
+session = LimiterSession(rate_limit=5, interval=5)
 session.headers['User-agent'] = 'my-program/1.0'
 
 def fetch_closing_prices(csv_file_path):
