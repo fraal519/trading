@@ -115,7 +115,7 @@ def main():
             stop_loss_price = stop_loss_price_20
         
         # Berechnung des Take-Profit-Preises basierend auf dem gewählten Stop-Loss-Preis
-        take_profit_price = purchase_price + 2 * (purchase_price - stop_loss_price)
+        take_profit_price = purchase_price + 3 * (purchase_price - stop_loss_price)
         
         # Berechnung der Anzahl der Aktien
         risk_per_share = purchase_price - stop_loss_price
