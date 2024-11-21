@@ -21,12 +21,11 @@ class TestApp(EClient, EWrapper):
     def error(self, reqId, errorCode, errorString, advancedOrderReject=""):
         print(f"reqId: {reqId}, errorCode: {errorCode}, errorString: {errorString}, orderReject: {advancedOrderReject}")
     
-    def historicalData(self, reqId, bar):
-        print(reqId, bar)
-    
-    def historicalDataEnd(self, reqId, start, end):
-        print(f"Historical Data Ended for {reqId}. Started at {start}, ending at {end}")
-        self.cancelHistoricalData(reqId)
+    def headTimestamp(self, reqId, headTimeStamp):
+        print(headTimeStamp)
+        print(datetime.datetime.fromtimestamp(int(headTimeStamp)))
+        self.cancelHeadTimeStamp(reqId)
+
 
 app = TestApp()
 app.connect("127.0.0.1", port, 1)
@@ -39,4 +38,4 @@ mycontract.secType = "STK"
 mycontract.exchange = "SMART"
 mycontract.currency = "USD"
 
-app.reqHistoricalData(app.nextId(), mycontract, "20241023 16:00:00 US/Eastern", "1 D", "1 hour", "TRADES", 1, 1, False, [])
+app.reqHeadTimeStamp(app.nextId(), mycontract, "TRADES", 1, 2)

@@ -1,59 +1,88 @@
-from ibapi.client import *
-from ibapi.wrapper import *
-import time
+from ibapi.client import EClient
+from ibapi.wrapper import EWrapper
+from ibapi.contract import Contract
 import threading
+import time
+
 
 class TestApp(EClient, EWrapper):
-  def __init__(self):
-    EClient.__init__(self, self)
-  
-  def nextValidId(self, orderId):
-    self.orderId = orderId
-  
-  def nextId(self):
-    self.orderId += 1
-    return self.orderId
+    def __init__(self):
+        EClient.__init__(self, self)
+        self.orderId = None
+        self.connected_event = threading.Event()  # Signal für Verbindung
+    
+    def nextValidId(self, orderId):
+        self.orderId = orderId
+        self.connected_event.set()  # Signal, dass ID bereit ist
+    
+    def nextId(self):
+        self.orderId += 1
+        return self.orderId
 
-  def error(self, reqId, errorCode, errorString, advancedOrderReject):
-    print(f"reqId: {reqId}, errorCode: {errorCode}, errorString: {errorString}, orderReject: {advancedOrderReject}")
+    def error(self, reqId, errorCode, errorString, advancedOrderReject=""):
+        print(f"Error - reqId: {reqId}, errorCode: {errorCode}, errorString: {errorString}, orderReject: {advancedOrderReject}")
 
-  def contractDetails(self, reqId, contractDetails):
-    attrs = vars(contractDetails)
-    print("\n".join(f"{name}: {value}" for name,value in attrs.items()))
-    # print(contractDetails.contract)
+    def contractDetails(self, reqId, contractDetails):
+        attrs = vars(contractDetails)
+        print("\n".join(f"{name}: {value}" for name, value in attrs.items()))
+    
+    def contractDetailsEnd(self, reqId):
+        print("End of contract details")
+        self.disconnect()
 
-  def contractDetailsEnd(self, reqId):
-    print("End of contract details")
-    self.disconnect()
 
-app = TestApp()
-app.connect("127.0.0.1", 7497, 0)
-threading.Thread(target=app.run).start()
-time.sleep(1)
+def main():
+    app = TestApp()
+    app.connect("127.0.0.1", 4002, 1)
 
-mycontract = Contract()
-# Stock
-mycontract.symbol = "AAPL"
-mycontract.secType = "STK"
-mycontract.currency = "USD"
-mycontract.exchange = "SMART"
-mycontract.primaryExchange = "NASDAQ"
+    # Starten des Hintergrund-Threads
+    thread = threading.Thread(target=app.run)
+    thread.start()
 
-# Future
-# mycontract.symbol = "ES"
-# mycontract.secType = "FUT"
-# mycontract.currency = "USD"
-# mycontract.exchange = "CME"
-# mycontract.lastTradeDateOrContractMonth = 202412
+    # Warten auf Verbindung
+    if not app.connected_event.wait(timeout=10):
+        print("Verbindung konnte nicht hergestellt werden.")
+        app.disconnect()
+        return
 
-# Option
-mycontract.symbol = "SPX"
-mycontract.secType = "OPT"
-mycontract.currency = "USD"
-mycontract.exchange = "SMART"
-mycontract.lastTradeDateOrContractMonth = 202412
-mycontract.right = "P"
-mycontract.tradingClass = "SPXW"
-mycontract.strike = 5300
+    # Vertrag konfigurieren
+    mycontract = Contract()
 
-app.reqContractDetails(app.nextId(), mycontract)
+    # Beispiel: Aktie (Stock)
+    mycontract.symbol = "AAPL"
+    mycontract.secType = "STK"
+    mycontract.currency = "USD"
+    mycontract.exchange = "SMART"
+    mycontract.primaryExchange = "NASDAQ"
+
+    # Beispiel: Future (auskommentieren, wenn nicht benötigt)
+    # mycontract.symbol = "ES"
+    # mycontract.secType = "FUT"
+    # mycontract.currency = "USD"
+    # mycontract.exchange = "CME"
+    # mycontract.lastTradeDateOrContractMonth = "202412"
+
+    # Beispiel: Option (auskommentieren, wenn nicht benötigt)
+    # mycontract.symbol = "SPX"
+    # mycontract.secType = "OPT"
+    # mycontract.currency = "USD"
+    # mycontract.exchange = "SMART"
+    # mycontract.lastTradeDateOrContractMonth = "202412"
+    # mycontract.right = "P"
+    # mycontract.tradingClass = "SPXW"
+    # mycontract.strike = 5300
+
+    # Anfrage stellen
+    app.reqContractDetails(app.nextId(), mycontract)
+
+    # Programm läuft für eine Weile
+    time.sleep(10)
+
+    # Verbindung sauber beenden
+    app.disconnect()
+    thread.join()
+    print("Programm beendet.")
+
+
+if __name__ == "__main__":
+    main()
