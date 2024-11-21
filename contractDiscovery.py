@@ -33,11 +33,11 @@ time.sleep(1)
 
 mycontract = Contract()
 # Stock
-# mycontract.symbol = "AAPL"
-# mycontract.secType = "STK"
-# mycontract.currency = "USD"
-# mycontract.exchange = "SMART"
-# mycontract.primaryExchange = "NASDAQ"
+mycontract.symbol = "AAPL"
+mycontract.secType = "STK"
+mycontract.currency = "USD"
+mycontract.exchange = "SMART"
+mycontract.primaryExchange = "NASDAQ"
 
 # Future
 # mycontract.symbol = "ES"
