@@ -4,7 +4,7 @@ import datetime
 import time
 import threading
 
-port = 7497
+port = 4002
 
 
 class TestApp(EClient, EWrapper):
@@ -29,7 +29,7 @@ class TestApp(EClient, EWrapper):
         self.cancelHistoricalData(reqId)
 
 app = TestApp()
-app.connect("127.0.0.1", port, 0)
+app.connect("127.0.0.1", port, 1)
 threading.Thread(target=app.run).start()
 time.sleep(1)
 
