@@ -85,7 +85,7 @@ def calculate_position(depot_size=20000, risk_per_position=10, total_risk=5, anz
     # Finden Sie den niedrigsten Preis der letzten 14 Tage
     stop_loss_price_14_days = min(low_prices[-14:])
     
-    return int(stock_price), stop_loss_price_atr, stop_loss_price_14_days, stop_loss_price_20, atr_21
+    return stock_price, stop_loss_price_atr, stop_loss_price_14_days, stop_loss_price_20, atr_21
 
 def main():
     while True:
