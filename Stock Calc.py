@@ -123,12 +123,18 @@ def main():
         max_purchase_value = 20000 / 5  # depot_size / anzahl_positionen
         number_of_shares = min(max_position_risk // risk_per_share, max_purchase_value // purchase_price)
         
+        # Berechnung der prozentualen Änderung zwischen Kaufpreis und Stop-Loss-Kurs
+        stop_loss_change_percentage = ((purchase_price - stop_loss_price) / purchase_price) * 100
+        
+        # Berechnung der prozentualen Änderung zwischen Kaufpreis und Take-Profit-Kurs
+        take_profit_change_percentage = ((take_profit_price - purchase_price) / purchase_price) * 100
+        
         # Erstellung der Ergebnistabelle
         results = {
             "Anzahl der Aktien": [int(number_of_shares)],
             "Kaufpreis (Stop Buy)": [f"${purchase_price:.2f}"],
-            "Stop-Loss": [f"${stop_loss_price:.2f}"],
-            "Take Profit": [f"${take_profit_price:.2f}"]
+            "Stop-Loss": [f"${stop_loss_price:.2f} ({stop_loss_change_percentage:.2f}%)"],
+            "Take Profit": [f"${take_profit_price:.2f} ({take_profit_change_percentage:.2f}%)"]
         }
         
         df = pd.DataFrame(results)
