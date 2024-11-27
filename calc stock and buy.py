@@ -84,7 +84,7 @@ def calculate_atr(high_prices, low_prices, close_prices, period=21):
 # Funktion zur Berechnung der Position
 def calculate_position(depot_size=20000, risk_per_position=10, total_risk=5, anzahl_positionen=5, ticker_symbol="AAPL"):
     high_prices, low_prices, close_prices = get_stock_data(ticker_symbol)
-    stock_price = close_prices[-1] * 1.001
+    stock_price = high_prices[-1] * 1.001
     atr_21 = calculate_atr(high_prices, low_prices, close_prices, period=21)
     max_portfolio_risk = depot_size * (total_risk / 100)
     max_position_risk = depot_size * (risk_per_position / 100)
