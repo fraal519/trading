@@ -59,7 +59,7 @@ def calculate_position(depot_size=20000, risk_per_position=10, total_risk=5, anz
     high_prices, low_prices, close_prices = get_stock_data(ticker_symbol)
     
     # Der Kaufpreis ist der letzte Schlusskurs plus 0,1%
-    stock_price = close_prices[-1] * 1.001
+    stock_price = high_prices[-1] * 1.001
     
     # Berechnen Sie den ATR (Average True Range) mit Periode 21
     atr_21 = calculate_atr(high_prices, low_prices, close_prices, period=21)
