@@ -8,6 +8,10 @@ from ibapi.contract import Contract
 from ibapi.order import Order
 import threading
 import time
+import logging
+
+# Setze Logging-Level auf WARN, um weniger Ausgaben zu sehen
+logging.basicConfig(level=logging.WARN)
 
 class TestApp(EClient, EWrapper):
     def __init__(self):
@@ -100,26 +104,48 @@ def main():
     app = TestApp()
     app.connect("127.0.0.1", 4002, 1)
     
+    # Hintergrundthread für die API-Ereignisschleife
     api_thread = threading.Thread(target=run_loop, daemon=True)
     api_thread.start()
 
+    # Sicherstellen, dass die Verbindung hergestellt ist
+    connection_timeout = 10  # Timeout in Sekunden
+    start_time = time.time()
+    while not app.isConnected():
+        print("Verbinde mit der TWS...", flush=True)
+        time.sleep(1)
+        if time.time() - start_time > connection_timeout:
+            print("Verbindung zur TWS konnte nicht hergestellt werden. Beenden...")
+            return
+    
+    # Haupteingabeschleife
     while True:
-        ticker_symbol = input("Bitte geben Sie das Tickersymbol ein: ")
-        purchase_price, stop_loss_price_atr, stop_loss_price_14_days, stop_loss_price_20, atr_21 = calculate_position(ticker_symbol=ticker_symbol)
+        ticker_symbol = input("Bitte geben Sie das Tickersymbol ein: ").strip()
+        if not ticker_symbol:
+            print("Tickersymbol darf nicht leer sein.")
+            continue
+
+        # Berechnungen durchführen
+        try:
+            purchase_price, stop_loss_price_atr, stop_loss_price_14_days, stop_loss_price_20, atr_21 = calculate_position(ticker_symbol=ticker_symbol)
+            
+            print(f"Kaufpreis: ${purchase_price:.2f}")
+            print(f"1. Stop-Loss-Preis (ATR-basiert): ${stop_loss_price_atr:.2f} ({((purchase_price - stop_loss_price_atr) / purchase_price) * 100:.2f}%)")
+            print(f"2. Stop-Loss-Preis (niedrigster Preis der letzten 14 Tage): ${stop_loss_price_14_days:.2f} ({((purchase_price - stop_loss_price_14_days) / purchase_price) * 100:.2f}%)")
+            print(f"3. Stop-Loss-Preis (-20% vom Kaufpreis): ${stop_loss_price_20:.2f} ({((purchase_price - stop_loss_price_20) / purchase_price) * 100:.2f}%)")
+        except Exception as e:
+            print(f"Fehler bei der Verarbeitung des Tickersymbols '{ticker_symbol}': {e}")
+            continue
         
-        print(f"Kaufpreis: ${purchase_price:.2f}")
-        
-        print(f"1. Stop-Loss-Preis (ATR-basiert): ${stop_loss_price_atr:.2f} ({((purchase_price - stop_loss_price_atr) / purchase_price) * 100:.2f}%)")
-        print(f"2. Stop-Loss-Preis (niedrigster Preis der letzten 14 Tage): ${stop_loss_price_14_days:.2f} ({((purchase_price - stop_loss_price_14_days) / purchase_price) * 100:.2f}%)")
-        print(f"3. Stop-Loss-Preis (-20% vom Kaufpreis): ${stop_loss_price_20:.2f} ({((purchase_price - stop_loss_price_20) / purchase_price) * 100:.2f}%)")
-        
+        # Benutzer wählt Stop-Loss-Option
         while True:
             stop_loss_choice = input("Welchen Stop-Loss-Preis möchten Sie verwenden? (1/2/3): ")
             if stop_loss_choice in ['1', '2', '3']:
                 break
             else:
                 print("Ungültige Auswahl. Bitte geben Sie 1, 2 oder 3 ein.")
-                
+        
+        # Setze Stop-Loss basierend auf der Wahl
         if stop_loss_choice == '1':
             stop_loss_price = stop_loss_price_atr
         elif stop_loss_choice == '2':
@@ -147,6 +173,7 @@ def main():
         print("\nErgebnisse:")
         display(df)
         
+        # Benutzer wählt, ob eine Bracket-Order erstellt werden soll
         while True:
             create_order = input("\nMöchten Sie eine Bracket Order bei Interactive Brokers anlegen? (1 = Ja, 2 = Nein): ")
             if create_order in ['1', '2']:
@@ -159,6 +186,7 @@ def main():
                 time.sleep(0.1)
             app.create_bracket_order(ticker_symbol, int(number_of_shares), purchase_price, take_profit_price, stop_loss_price)
         
+        # Benutzer wählt, ob eine weitere Berechnung durchgeführt werden soll
         while True:
             another_calculation = input("\nMöchten Sie eine weitere Berechnung durchführen? (1 = Ja, 2 = Nein): ")
             if another_calculation in ['1', '2']:
