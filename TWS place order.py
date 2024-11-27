@@ -1,6 +1,8 @@
 from ibapi.client import *
 from ibapi.wrapper import *
 from decimal import Decimal
+# Setze Logging-Level auf WARN, um weniger Ausgaben zu sehen
+logging.basicConfig(level=logging.WARN)
 
 class TestApp(EClient, EWrapper):
   def __init__(self):
