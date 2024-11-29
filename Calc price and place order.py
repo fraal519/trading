@@ -79,18 +79,6 @@ def bracketOrder(parentOrderId, action, quantity, limitPrice, takeProfitPrice, s
     
     return [parent, takeProfit, stopLoss]
 
-app = TradingApp()
-app.connect("127.0.0.1", 4002, clientId=1)
-
-# Start a separate daemon thread to execute the websocket connection
-con_thread = threading.Thread(target=websocket_con, daemon=True)
-con_thread.start()
-time.sleep(1)  # some latency added to ensure that the connection is established
-
-# Wait for next valid order id
-while app.nextValidOrderId is None:
-    time.sleep(0.1)
-
 # Funktion zum Abrufen der historischen Aktiendaten
 def get_stock_data(ticker_symbol, period="1mo"):
     """
@@ -234,6 +222,19 @@ def main():
         # Abfrage, ob eine Kauforder angelegt werden soll
         place_order = input("Möchten Sie eine Kauforder anlegen? (1 = Ja, 2 = Nein): ")
         if place_order == '1':
+            # Verbindung zu Interactive Brokers herstellen
+            app = TradingApp()
+            app.connect("127.0.0.1", 4002, clientId=1)
+
+            # Start a separate daemon thread to execute the websocket connection
+            con_thread = threading.Thread(target=websocket_con, daemon=True)
+            con_thread.start()
+            time.sleep(1)  # some latency added to ensure that the connection is established
+
+            # Wait for next valid order id
+            while app.nextValidOrderId is None:
+                time.sleep(0.1)
+
             # Create the contract
             contract = usTechStk(ticker_symbol)
             
@@ -257,14 +258,14 @@ def main():
             time.sleep(5)  # some latency added to ensure that the open orders are retrieved
             
             print("Order erfolgreich platziert.")
+            
+            # Disconnect the client
+            app.disconnect()
         
         # Abfrage, ob eine weitere Berechnung durchgeführt werden soll
         another_calculation = input("\nMöchten Sie eine weitere Berechnung durchführen? (1 = Ja, 2 = Nein): ")
         if another_calculation == '2':
             break
-
-    # Disconnect the client
-    app.disconnect()
 
 if __name__ == "__main__":
     main()
