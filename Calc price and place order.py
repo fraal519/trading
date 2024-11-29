@@ -33,7 +33,7 @@ class TradingApp(EWrapper, EClient):
         self.openOrders.append((orderId, contract.symbol, order.action, order.totalQuantity, order.lmtPrice))
         print("Open Order: OrderId: {}, Symbol: {}, Action: {}, Quantity: {}, Limit Price: {}".format(orderId, contract.symbol, order.action, order.totalQuantity, order.lmtPrice))
 
-def websocket_con():
+def websocket_con(app):
     app.run()
 
 def usTechStk(symbol, sec_type="STK", currency="USD", exchange="SMART"):
@@ -227,7 +227,7 @@ def main():
             app.connect("127.0.0.1", 4002, clientId=1)
 
             # Start a separate daemon thread to execute the websocket connection
-            con_thread = threading.Thread(target=websocket_con, daemon=True)
+            con_thread = threading.Thread(target=websocket_con, args=(app,), daemon=True)
             con_thread.start()
             time.sleep(1)  # some latency added to ensure that the connection is established
 
