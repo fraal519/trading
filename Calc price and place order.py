@@ -248,6 +248,9 @@ def main():
             for order in bracket:
                 app.placeOrder(order.orderId, contract, order)
                 time.sleep(1)  # some latency added to ensure that the order is placed
+
+            # Update the next valid order ID
+            app.nextValidOrderId += len(bracket)
             
             # Requesting account positions
             app.reqPositions()
