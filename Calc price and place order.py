@@ -50,7 +50,7 @@ def bracketOrder(parentOrderId, action, quantity, limitPrice, takeProfitPrice, s
     parent.action = action
     parent.orderType = "LMT"
     parent.totalQuantity = quantity
-    parent.lmtPrice = limitPrice
+    parent.lmtPrice = round(limitPrice, 2)
     parent.transmit = False
     parent.eTradeOnly = False
     parent.firmQuoteOnly = False
@@ -60,7 +60,7 @@ def bracketOrder(parentOrderId, action, quantity, limitPrice, takeProfitPrice, s
     takeProfit.action = "SELL"
     takeProfit.orderType = "LMT"
     takeProfit.totalQuantity = quantity
-    takeProfit.lmtPrice = takeProfitPrice
+    takeProfit.lmtPrice = round(takeProfitPrice, 2)
     takeProfit.parentId = parentOrderId
     takeProfit.transmit = False
     takeProfit.eTradeOnly = False
@@ -71,7 +71,7 @@ def bracketOrder(parentOrderId, action, quantity, limitPrice, takeProfitPrice, s
     stopLoss.action = "SELL"
     stopLoss.orderType = "STP"
     stopLoss.totalQuantity = quantity
-    stopLoss.auxPrice = stopLossPrice
+    stopLoss.auxPrice = round(stopLossPrice, 2)
     stopLoss.parentId = parentOrderId
     stopLoss.transmit = True
     stopLoss.eTradeOnly = False
