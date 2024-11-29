@@ -48,7 +48,7 @@ def bracketOrder(parentOrderId, action, quantity, limitPrice, takeProfitPrice, s
     parent = Order()
     parent.orderId = parentOrderId
     parent.action = action
-    parent.orderType = "LMT"
+    parent.orderType = "STP"
     parent.totalQuantity = quantity
     parent.lmtPrice = round(limitPrice, 2)
     parent.transmit = False
