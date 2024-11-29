@@ -50,7 +50,7 @@ def bracketOrder(parentOrderId, action, quantity, limitPrice, takeProfitPrice, s
     parent.action = action
     parent.orderType = "STP"
     parent.totalQuantity = quantity
-    parent.lmtPrice = round(limitPrice, 2)
+    parent.auxPrice = round(limitPrice, 2)
     parent.transmit = False
     parent.eTradeOnly = False
     parent.firmQuoteOnly = False
