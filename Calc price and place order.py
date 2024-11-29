@@ -252,14 +252,6 @@ def main():
             # Update the next valid order ID
             app.nextValidOrderId += len(bracket)
             
-            # Requesting account positions
-            app.reqPositions()
-            time.sleep(5)  # some latency added to ensure that the positions are retrieved
-            
-            # Requesting open orders
-            app.reqOpenOrders()
-            time.sleep(5)  # some latency added to ensure that the open orders are retrieved
-            
             print("Order erfolgreich platziert.")
             
             # Disconnect the client
