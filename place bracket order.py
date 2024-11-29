@@ -70,6 +70,6 @@ class TestApp(EClient, EWrapper):
         print(f"execDetails. reqId: {reqId}, contract: {contract}, execution: {execution}")
 
 app = TestApp()
-app.connect("127.0.0.1", 7497, 1000)  # Verbindung zu IB Gateway oder TWS
+app.connect("127.0.0.1", 4002, 1)  # Verbindung zu IB Gateway oder TWS
 app.placeBracketOrder()  # Platzierung der Bracket Order
 app.run()
