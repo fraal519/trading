@@ -5,52 +5,52 @@ from IPython.display import display
 
 def read_stock_symbols(filename):
     """
-    Liest die CSV-Datei mit Aktiensymbolen ein.
+    Reads the CSV file with stock symbols.
 
     Args:
-        filename (str): Der Dateiname der CSV-Datei.
+        filename (str): The filename of the CSV file.
 
     Returns:
-        list: Eine Liste von Aktiensymbolen.
+        list: A list of stock symbols.
     """
     df = pd.read_csv(filename)
     return df['Symbol'].tolist()
 
 def get_stock_data(symbol):
     """
-    Holt die historischen Daten für ein gegebenes Aktiensymbol.
+    Retrieves historical data for a given stock symbol.
 
     Args:
-        symbol (str): Das Aktiensymbol.
+        symbol (str): The stock symbol.
 
     Returns:
-        DataFrame: Ein DataFrame mit historischen Daten.
+        DataFrame: A DataFrame with historical data.
     """
     stock = yf.Ticker(symbol)
     return stock.history(period="1y")
 
 def calculate_sma(data, window):
     """
-    Berechnet den einfachen gleitenden Durchschnitt (SMA).
+    Calculates the simple moving average (SMA).
 
     Args:
-        data (DataFrame): Ein DataFrame mit historischen Daten.
-        window (int): Die Fenstergröße für den gleitenden Durchschnitt.
+        data (DataFrame): A DataFrame with historical data.
+        window (int): The window size for the moving average.
 
     Returns:
-        Series: Eine Serie mit den SMA-Werten.
+        Series: A series with the SMA values.
     """
     return data['Close'].rolling(window=window).mean()
 
 def calculate_ichimoku(data):
     """
-    Berechnet die Ichimoku-Komponenten.
+    Calculates the Ichimoku components.
 
     Args:
-        data (DataFrame): Ein DataFrame mit historischen Daten.
+        data (DataFrame): A DataFrame with historical data.
 
     Returns:
-        None: Die Funktion fügt die Ichimoku-Komponenten direkt zum DataFrame hinzu.
+        None: The function adds the Ichimoku components directly to the DataFrame.
     """
     high_9 = data['High'].rolling(window=9).max()
     low_9 = data['Low'].rolling(window=9).min()
@@ -73,80 +73,104 @@ def calculate_ichimoku(data):
 
 def check_cup_with_handle(data):
     """
-    Überprüft, ob eine "Cup with Handle"-Formation vorliegt.
+    Checks if a "cup with handle" formation is present.
 
     Args:
-        data (DataFrame): Ein DataFrame mit historischen Daten.
+        data (DataFrame): A DataFrame with historical data.
 
     Returns:
-        bool: True, wenn eine "Cup with Handle"-Formation vorliegt, sonst False.
+        bool: True if a "cup with handle" formation is present, otherwise False.
     """
-    # Eine vereinfachte Implementierung zur Erkennung der "Cup with Handle"-Formation
     cup_found = False
     handle_found = False
 
-    # Parameter für die Cup-Formation
-    cup_depth_threshold = 0.15  # 15% Rückgang vom Höchststand
-    handle_depth_threshold = 0.05  # 5% Rückgang vom Höchststand
-    cup_length = 30  # Anzahl der Tage für die Cup-Formation
-    handle_length = 10  # Anzahl der Tage für die Handle-Formation
+    # Parameters for the cup with handle formation
+    cup_depth_threshold = 0.33  # 33% decline from the peak
+    handle_depth_threshold = 0.12  # 12% decline from the peak
+    cup_length_min = 30  # Minimum number of days for the cup formation
+    handle_length_min = 5  # Minimum number of days for the handle formation
+    handle_length_max = cup_length_min  # Handle should not exceed the cup portion in time
 
-    # Überprüfung der Cup-Formation
-    for i in range(len(data) - cup_length - handle_length):
-        cup = data['Close'].iloc[i:i + cup_length]
-        max_price = cup.max()
-        min_price = cup.min()
-        if (max_price - min_price) / max_price > cup_depth_threshold:
-            cup_found = True
+    # Check for a 30% uptrend before the base's construction
+    uptrend_threshold = 0.30
+    for i in range(len(data) - cup_length_min - handle_length_max):
+        pre_cup = data['Close'].iloc[:i]
+        if len(pre_cup) > 0 and (pre_cup.max() - pre_cup.min()) / pre_cup.min() >= uptrend_threshold:
+            cup = data['Close'].iloc[i:i + cup_length_min]
+            max_price = cup.max()
+            min_price = cup.min()
+            cup_depth = (max_price - min_price) / max_price
 
-            # Überprüfung der Handle-Formation
-            handle = data['Close'].iloc[i + cup_length:i + cup_length + handle_length]
-            handle_max_price = handle.max()
-            handle_min_price = handle.min()
-            if (handle_max_price - handle_min_price) / handle_max_price < handle_depth_threshold:
-                handle_found = True
-                break
+            # Check if the cup is at least 1.5 times as long as it is deep
+            if cup_depth > cup_depth_threshold and len(cup) / cup_depth >= 1.5:
+                cup_found = True
 
-    return cup_found and handle_found
+                # Check for the handle formation
+                handle = data['Close'].iloc[i + cup_length_min:i + cup_length_min + handle_length_max]
+                handle_max_price = handle.max()
+                handle_min_price = handle.min()
+                handle_depth = (handle_max_price - handle_min_price) / handle_max_price
+
+                # Check if the handle is relatively flat and does not exceed the cup in time or size of decline
+                if handle_depth < handle_depth_threshold and handle_min_price > min_price + (max_price - min_price) / 3:
+                    handle_found = True
+
+                    # Check if the handle starts with a down day in price
+                    if handle.iloc[0] > handle.iloc[1]:
+                        # Check if the volume decreases during the handle formation
+                        cup_volume = data['Volume'].iloc[i:i + cup_length_min]
+                        handle_volume = data['Volume'].iloc[i + cup_length_min:i + cup_length_min + handle_length_max]
+                        if cup_volume.max() > handle_volume.max():
+                            # Check if the breakout from the handle occurs with above-average volume
+                            breakout_volume = data['Volume'].iloc[i + cup_length_min + handle_length_max]
+                            avg_volume = data['Volume'].rolling(window=50).mean().iloc[i + cup_length_min + handle_length_max]
+                            if breakout_volume > avg_volume:
+                                # Additional checks for the handle
+                                handle_midpoint = (handle_max_price + handle_min_price) / 2
+                                cup_midpoint = (max_price + min_price) / 2
+                                if handle_midpoint > cup_midpoint:
+                                    return True
+
+    return False
 
 def check_buy_signals(data):
     """
-    Überprüft die Kaufsignale.
+    Checks for buy signals.
 
     Args:
-        data (DataFrame): Ein DataFrame mit historischen Daten.
+        data (DataFrame): A DataFrame with historical data.
 
     Returns:
-        list: Eine Liste von Kaufsignalen.
+        list: A list of buy signals.
     """
     signals = []
 
-    # SMA 15 kreuzt SMA 50 von unten nach oben
+    # SMA 15 crosses SMA 50 from below
     sma_15 = calculate_sma(data, 15)
     sma_50 = calculate_sma(data, 50)
     if (sma_15.iloc[-4] < sma_50.iloc[-4]) and (sma_15.iloc[-3] > sma_50.iloc[-3]):
-        signals.append("SMA 15 kreuzt SMA 50 von unten nach oben")
+        signals.append("SMA 15 crosses SMA 50 from below")
 
-    # Handelsvolumen ist 20% höher als der 50 Tage Durchschnitt (letzten beiden Handelstage)
+    # Trading volume is 20% higher than the 50-day average (last two trading days)
     avg_volume_50 = data['Volume'].rolling(window=50).mean()
     if data['Volume'].iloc[-2] > 1.2 * avg_volume_50.iloc[-2] or data['Volume'].iloc[-3] > 1.2 * avg_volume_50.iloc[-3]:
-        signals.append("Handelsvolumen ist 20% höher als der 50 Tage Durchschnitt (letzten beiden Handelstage)")
+        signals.append("Trading volume is 20% higher than the 50-day average (last two trading days)")
 
-    # Ichimoku Bedingung
+    # Ichimoku condition
     calculate_ichimoku(data)
     if (data['Tenkan_Sen'].iloc[-4] < data['Kijun_Sen'].iloc[-4]) and (data['Tenkan_Sen'].iloc[-3] > data['Kijun_Sen'].iloc[-3]):
         if data['Tenkan_Sen'].iloc[-3] > max(data['Span_A'].iloc[-3], data['Span_B'].iloc[-3]) and data['Kijun_Sen'].iloc[-3] > max(data['Span_A'].iloc[-3], data['Span_B'].iloc[-3]):
-            signals.append("Starkes Ichimoku Kaufsignal: Kreuzung oberhalb der Wolke")
+            signals.append("Strong Ichimoku buy signal: Cross above the cloud")
 
-    # Überprüfung auf "Cup with Handle"-Formation
+    # Check for "cup with handle" formation
     if check_cup_with_handle(data):
-        signals.append("Cup with Handle-Formation erkannt")
+        signals.append("Cup with handle formation detected")
 
     return signals
 
 def main():
     """
-    Hauptprogramm, das die CSV-Datei einliest, die Kaufsignale überprüft und die Ergebnisse ausgibt.
+    Main program that reads the CSV file, checks for buy signals, and outputs the results.
 
     Args:
         None
@@ -155,13 +179,13 @@ def main():
         None
     """
     while True:
-        filename = input("Bitte geben Sie den Dateinamen der CSV-Datei ein: ")
+        filename = input("Please enter the filename of the CSV file: ")
         symbols = read_stock_symbols(filename)
 
         results = []
 
         for symbol in symbols:
-            print(f"Überprüfe Kaufsignale für {symbol}...")
+            print(f"Checking buy signals for {symbol}...")
             data = get_stock_data(symbol)
             signals = check_buy_signals(data)
             for signal in signals:
@@ -169,12 +193,12 @@ def main():
 
         if results:
             results_df = pd.DataFrame(results)
-            print("\nErgebnisse:")
+            print("\nResults:")
             display(results_df)
         else:
-            print("Keine Kaufsignale gefunden.")
+            print("No buy signals found.")
 
-        another_calculation = input("Möchten Sie eine weitere Berechnung durchführen? (1 für Ja, 2 für Nein): ").strip()
+        another_calculation = input("Would you like to perform another calculation? (1 for Yes, 2 for No): ").strip()
         if another_calculation != '1':
             break
 
