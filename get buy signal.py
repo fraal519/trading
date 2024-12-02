@@ -71,6 +71,44 @@ def calculate_ichimoku(data):
     data['Span_A'] = span_a
     data['Span_B'] = span_b
 
+def check_cup_with_handle(data):
+    """
+    Überprüft, ob eine "Cup with Handle"-Formation vorliegt.
+
+    Args:
+        data (DataFrame): Ein DataFrame mit historischen Daten.
+
+    Returns:
+        bool: True, wenn eine "Cup with Handle"-Formation vorliegt, sonst False.
+    """
+    # Eine vereinfachte Implementierung zur Erkennung der "Cup with Handle"-Formation
+    cup_found = False
+    handle_found = False
+
+    # Parameter für die Cup-Formation
+    cup_depth_threshold = 0.15  # 15% Rückgang vom Höchststand
+    handle_depth_threshold = 0.05  # 5% Rückgang vom Höchststand
+    cup_length = 30  # Anzahl der Tage für die Cup-Formation
+    handle_length = 10  # Anzahl der Tage für die Handle-Formation
+
+    # Überprüfung der Cup-Formation
+    for i in range(len(data) - cup_length - handle_length):
+        cup = data['Close'].iloc[i:i + cup_length]
+        max_price = cup.max()
+        min_price = cup.min()
+        if (max_price - min_price) / max_price > cup_depth_threshold:
+            cup_found = True
+
+            # Überprüfung der Handle-Formation
+            handle = data['Close'].iloc[i + cup_length:i + cup_length + handle_length]
+            handle_max_price = handle.max()
+            handle_min_price = handle.min()
+            if (handle_max_price - handle_min_price) / handle_max_price < handle_depth_threshold:
+                handle_found = True
+                break
+
+    return cup_found and handle_found
+
 def check_buy_signals(data):
     """
     Überprüft die Kaufsignale.
@@ -83,11 +121,11 @@ def check_buy_signals(data):
     """
     signals = []
 
-    # SMA 5 kreuzt SMA 20 von unten nach oben
-    sma_5 = calculate_sma(data, 5)
-    sma_20 = calculate_sma(data, 20)
-    if (sma_5.iloc[-4] < sma_20.iloc[-4]) and (sma_5.iloc[-3] > sma_20.iloc[-3]):
-        signals.append("SMA 5 kreuzt SMA 20 von unten nach oben")
+    # SMA 15 kreuzt SMA 50 von unten nach oben
+    sma_15 = calculate_sma(data, 15)
+    sma_50 = calculate_sma(data, 50)
+    if (sma_15.iloc[-4] < sma_50.iloc[-4]) and (sma_15.iloc[-3] > sma_50.iloc[-3]):
+        signals.append("SMA 15 kreuzt SMA 50 von unten nach oben")
 
     # Handelsvolumen ist 20% höher als der 50 Tage Durchschnitt (letzten beiden Handelstage)
     avg_volume_50 = data['Volume'].rolling(window=50).mean()
@@ -99,6 +137,10 @@ def check_buy_signals(data):
     if (data['Tenkan_Sen'].iloc[-4] < data['Kijun_Sen'].iloc[-4]) and (data['Tenkan_Sen'].iloc[-3] > data['Kijun_Sen'].iloc[-3]):
         if data['Tenkan_Sen'].iloc[-3] > max(data['Span_A'].iloc[-3], data['Span_B'].iloc[-3]) and data['Kijun_Sen'].iloc[-3] > max(data['Span_A'].iloc[-3], data['Span_B'].iloc[-3]):
             signals.append("Starkes Ichimoku Kaufsignal: Kreuzung oberhalb der Wolke")
+
+    # Überprüfung auf "Cup with Handle"-Formation
+    if check_cup_with_handle(data):
+        signals.append("Cup with Handle-Formation erkannt")
 
     return signals
 
