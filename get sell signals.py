@@ -1,5 +1,6 @@
 from ib_insync import IB, Contract
 import pandas as pd
+from IPython.display import display
 
 # Verbindung zur TWS herstellen
 ib = IB()
@@ -29,7 +30,9 @@ portfolio_df = pd.DataFrame(portfolio_list)
 
 # Portfolio anzeigen
 print("Portfolio:")
-print(portfolio_df)
+display(portfolio_df)
+print("-" * 30)
+print("-" * 30)
 
 # Verkaufssignale prüfen
 def check_sell_signals(row):
