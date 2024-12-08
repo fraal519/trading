@@ -155,25 +155,25 @@ def calculate_position(depot_size=20000, risk_per_position=10, total_risk=5, anz
     # Berechnen Sie den Stopploss-Preis basierend auf dem ATR
     stop_loss_price_atr = stock_price - (2 * atr_21)
     
-    # Berechnen Sie den Stopploss-Preis basierend auf -20% vom Kaufpreis
-    stop_loss_price_20 = stock_price * 0.8
+    # Berechnen Sie den Stopploss-Preis basierend auf -10% vom Kaufpreis
+    stop_loss_price_10 = stock_price * 0.9
     
     # Finden Sie den niedrigsten Preis der letzten 14 Tage
     stop_loss_price_14_days = min(low_prices[-14:])
     
-    return stock_price, stop_loss_price_atr, stop_loss_price_14_days, stop_loss_price_20, atr_21
+    return stock_price, stop_loss_price_atr, stop_loss_price_14_days, stop_loss_price_10, atr_21
 
 def main():
     while True:
         ticker_symbol = input("Bitte geben Sie das Tickersymbol ein: ")
-        purchase_price, stop_loss_price_atr, stop_loss_price_14_days, stop_loss_price_20, atr_21 = calculate_position(ticker_symbol=ticker_symbol)
+        purchase_price, stop_loss_price_atr, stop_loss_price_14_days, stop_loss_price_10, atr_21 = calculate_position(ticker_symbol=ticker_symbol)
         
         print(f"Kaufpreis: ${purchase_price:.2f}")
         
         # Ausgabe der Stop-Loss-Preise und deren prozentuale Änderung zum Kaufpreis
         print(f"1. Stop-Loss-Preis (ATR-basiert): ${stop_loss_price_atr:.2f} ({((purchase_price - stop_loss_price_atr) / purchase_price) * 100:.2f}%)")
         print(f"2. Stop-Loss-Preis (niedrigster Preis der letzten 14 Tage): ${stop_loss_price_14_days:.2f} ({((purchase_price - stop_loss_price_14_days) / purchase_price) * 100:.2f}%)")
-        print(f"3. Stop-Loss-Preis (-20% vom Kaufpreis): ${stop_loss_price_20:.2f} ({((purchase_price - stop_loss_price_20) / purchase_price) * 100:.2f}%)")
+        print(f"3. Stop-Loss-Preis (-10% vom Kaufpreis): ${stop_loss_price_10:.2f} ({((purchase_price - stop_loss_price_10) / purchase_price) * 100:.2f}%)")
         
         # Abfrage, welches Stop-Loss-Wert verwendet werden soll
         while True:
@@ -188,7 +188,7 @@ def main():
         elif stop_loss_choice == '2':
             stop_loss_price = stop_loss_price_14_days
         elif stop_loss_choice == '3':
-            stop_loss_price = stop_loss_price_20
+            stop_loss_price = stop_loss_price_10
         
         # Berechnung des Take-Profit-Preises basierend auf dem gewählten Stop-Loss-Preis
         take_profit_price = purchase_price + 3 * (purchase_price - stop_loss_price)
