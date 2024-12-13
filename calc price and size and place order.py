@@ -29,7 +29,7 @@ class TradingApp(EWrapper, EClient):
         self.positions.append((account, contract.symbol, position, avgCost))
         print("Position: Account: {}, Symbol: {}, Position: {}, Avg Cost: {}".format(account, contract.symbol, position, avgCost))
 
-    def openOrder(self, orderId, contract, order, orderState):
+    def openOrder(self, orderId, contract, order):
         self.openOrders.append((orderId, contract.symbol, order.action, order.totalQuantity, order.lmtPrice))
         print("Open Order: OrderId: {}, Symbol: {}, Action: {}, Quantity: {}, Limit Price: {}".format(orderId, contract.symbol, order.action, order.totalQuantity, order.lmtPrice))
 
@@ -118,7 +118,7 @@ def calculate_atr(high_prices, low_prices, close_prices, period=21):
     return atr
 
 # Funktion zur Berechnung der Position
-def calculate_position(depot_size, risk_per_position, total_risk, anzahl_positionen, p, ticker_symbol="AAPL"):
+def calculate_position(depot_size, risk_per_position, total_risk, p, ticker_symbol="AAPL"):
     """
     Berechnet die Anzahl der Aktien, den Kaufpreis und den Stop-Loss-Preis basierend auf verschiedenen Risikoparametern.
 
@@ -151,7 +151,7 @@ def calculate_position(depot_size, risk_per_position, total_risk, anzahl_positio
     max_position_risk = min(max_position_risk, max_portfolio_risk)
     
     # Limit für die Position auf 20% des Depotwerts
-    max_depot_value_limit = depot_size * 0.20
+    # max_depot_value_limit = depot_size * 0.20
     
     # Berechnen Sie den Stopploss-Preis basierend auf dem ATR
     stop_loss_price_atr = stock_price - (2 * atr_21)
@@ -166,7 +166,7 @@ def calculate_position(depot_size, risk_per_position, total_risk, anzahl_positio
     q = 1 - p
     kelly_factor = p - (q / (p / q))
     
-    return stock_price, stop_loss_price_atr, stop_loss_price_14_days, stop_loss_price_10, atr_21, kelly_factor
+    return stock_price, stop_loss_price_atr, stop_loss_price_14_days, stop_loss_price_10, kelly_factor
 
 def main():
     # Parameter abfragen
@@ -178,7 +178,7 @@ def main():
     
     while True:
         ticker_symbol = input("Bitte geben Sie das Tickersymbol ein: ")
-        purchase_price, stop_loss_price_atr, stop_loss_price_14_days, stop_loss_price_10, atr_21, kelly_factor = calculate_position(depot_size, risk_per_position, total_risk, anzahl_positionen, p, ticker_symbol=ticker_symbol)
+        purchase_price, stop_loss_price_atr, stop_loss_price_14_days, stop_loss_price_10, kelly_factor = calculate_position(depot_size, risk_per_position, total_risk, p, ticker_symbol=ticker_symbol)
         
         print(f"Kaufpreis: ${purchase_price:.2f}")
         
@@ -209,10 +209,10 @@ def main():
         risk_per_share = purchase_price - stop_loss_price
         max_position_risk = depot_size * (risk_per_position / 100)
         max_purchase_value = depot_size / anzahl_positionen  # depot_size / anzahl_positionen
-        number_of_shares = min(max_position_risk // risk_per_share, max_purchase_value // purchase_price)
+        number_of_shares = min(max_position_risk / risk_per_share, max_purchase_value / purchase_price)
         
         # Anwendung des Kelly-Faktors
-        number_of_shares = number_of_shares * kelly_factor
+        number_of_shares = int(number_of_shares * kelly_factor)
         
         # Berechnung der prozentualen Änderung zwischen Kaufpreis und Stop-Loss-Kurs
         stop_loss_change_percentage = ((purchase_price - stop_loss_price) / purchase_price) * 100
