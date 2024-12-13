@@ -1,68 +1,61 @@
-from ib_insync import IB, util, Contract
 import pandas as pd
+from ibapi.client import EClient
+from ibapi.wrapper import EWrapper
+from ibapi.account_summary_tags import AccountSummaryTags
+import time
 
-# Verbindung zur TWS herstellen
-ib = IB()
-ib.connect('127.0.0.1', 4002, clientId=1)
+class TradeApp(EWrapper, EClient):
+    def __init__(self):
+        EClient.__init__(self, self)
+        self.account_data = []
 
-# Portfolio-Daten abrufen
-def fetch_portfolio():
-    portfolio = ib.portfolio()
-    portfolio_data = []
-    for position in portfolio:
-        data = {
-            "Symbol": position.contract.symbol,
-            "Position": position.position,
-            "Marktpreis": position.marketPrice,
-            "Marktwert": position.marketValue,
-            "Durchschnittlicher Kaufpreis": position.averageCost,
-            "Unrealisierter Gewinn/Verlust": position.unrealizedPNL,
-            "Realisierter Gewinn/Verlust": position.realizedPNL,
-            "Konto": position.account,
-        }
-        portfolio_data.append(data)
-    return portfolio_data
+    def accountSummary(self, reqId: int, account: str, tag: str, value: str, currency: str):
+        """
+        Collects the account summary data for account DU4662643 and stores it in a list of dictionaries.
+        """
+        # Only process data for account 'DU4662643'
+        if account == "DU4662643":
+            data = {
+                'Account': account,
+                'Tag': tag,
+                'Value': value,
+                'Currency': currency
+            }
+            self.account_data.append(data)
+    
+    def accountSummaryEnd(self, reqId: int):
+        """
+        Display the account summary data as a table when all data is received.
+        """
+        print(f"AccountSummaryEnd. ReqId: {reqId}")
+        self.display_data()
 
-# Offene Orders abrufen
-def fetch_all_open_orders():
-    ib.reqAllOpenOrders()  # Fordere alle offenen Orders an
-    ib.sleep(2)  # Warte, bis die Daten geladen sind
-    open_orders = ib.trades()  # Abruf der offenen Trades nach Anfrage
-    orders_data = []
-    for trade in open_orders:
-        order = trade.order
-        contract = trade.contract
-        data = {
-            "Symbol": contract.symbol,
-            "Order ID": order.orderId,
-            "Order Typ": order.orderType,
-            "Menge": order.totalQuantity,
-            "Preis": order.lmtPrice if order.orderType == "LMT" else "Marktpreis",
-            "Richtung": order.action,
-            "Status": trade.orderStatus.status,
-        }
-        orders_data.append(data)
-    return orders_data
+    def display_data(self):
+        """
+        Displays the collected account summary data as a table using pandas.
+        """
+        # Convert the account data to a pandas DataFrame
+        df = pd.DataFrame(self.account_data)
+        
+        # Display the table
+        print("\nAccount Summary Data:")
+        print(df.to_string(index=False))  # Display without row indices
 
-# Daten abrufen und in Tabellen umwandeln
-portfolio_list = fetch_portfolio()
-orders_list = fetch_all_open_orders()
+def main():
+    # Initialize the app
+    app = TradeApp()
+    
+    # Connect to Interactive Brokers TWS (port 4002, clientId 1)
+    app.connect("127.0.0.1", 4002, clientId=1)
+    
+    # Allow time for connection to establish
+    time.sleep(1)
+    
+    # Request account summary for account 'DU4662643' only (using the specific account number)
+    app.reqAccountSummary(9001, "DU4662643", AccountSummaryTags.AllTags)
+    
+    # Start the application's event loop to receive account summary data
+    app.run()
 
-# Portfolio-Daten in DataFrame
-portfolio_df = pd.DataFrame(portfolio_list)
-if portfolio_df.empty:
-    print("Keine Portfoliodaten verfügbar.")
-else:
-    print("\n--- Portfolio-Daten ---\n")
-    print(portfolio_df)
-
-# Offene Orders in DataFrame
-orders_df = pd.DataFrame(orders_list)
-if orders_df.empty:
-    print("\nKeine offenen Orders verfügbar.")
-else:
-    print("\n--- Offene Orders ---\n")
-    print(orders_df)
-
-# Verbindung trennen
-ib.disconnect()
+if __name__ == "__main__":
+    main()
