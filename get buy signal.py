@@ -14,7 +14,10 @@ def read_stock_symbols(filename):
         list: A list of stock symbols.
     """
     df = pd.read_csv(filename)
-    return df['Symbol'].tolist()
+    if 'Symbol' in df.columns:
+        return df['Symbol'].tolist()
+    else:
+        raise ValueError("The CSV file does not contain a 'Symbol' column.")
 
 def get_stock_data(symbol):
     """
