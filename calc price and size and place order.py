@@ -52,8 +52,6 @@ def bracketOrder(parentOrderId, action, quantity, limitPrice, takeProfitPrice, s
     parent.totalQuantity = quantity
     parent.auxPrice = round(limitPrice, 2)
     parent.transmit = False
-    parent.eTradeOnly = False
-    parent.firmQuoteOnly = False
     
     takeProfit = Order()
     takeProfit.orderId = parentOrderId + 1
@@ -63,8 +61,6 @@ def bracketOrder(parentOrderId, action, quantity, limitPrice, takeProfitPrice, s
     takeProfit.lmtPrice = round(takeProfitPrice, 2)
     takeProfit.parentId = parentOrderId
     takeProfit.transmit = False
-    takeProfit.eTradeOnly = False
-    takeProfit.firmQuoteOnly = False
     
     stopLoss = Order()
     stopLoss.orderId = parentOrderId + 2
@@ -74,102 +70,44 @@ def bracketOrder(parentOrderId, action, quantity, limitPrice, takeProfitPrice, s
     stopLoss.auxPrice = round(stopLossPrice, 2)
     stopLoss.parentId = parentOrderId
     stopLoss.transmit = True
-    stopLoss.eTradeOnly = False
-    stopLoss.firmQuoteOnly = False
     
     return [parent, takeProfit, stopLoss]
 
-# Funktion zum Abrufen der historischen Aktiendaten
 def get_stock_data(ticker_symbol, period="1mo"):
-    """
-    Ruft die historischen Daten für eine Aktie von Yahoo Finance ab.
-
-    Args:
-    ticker_symbol (str): Das Tickersymbol der Aktie.
-    period (str): Der Zeitraum, für den die historischen Daten abgerufen werden sollen.
-
-    Returns:
-    tuple: Listen von Höchst-, Tiefst- und Schlusskursen.
-    """
     stock = yf.Ticker(ticker_symbol)
     hist = stock.history(period=period)
     return hist['High'].tolist(), hist['Low'].tolist(), hist['Close'].tolist()
 
-# Funktion zur Berechnung des Average True Range (ATR)
 def calculate_atr(high_prices, low_prices, close_prices, period=21):
-    """
-    Berechnet den Average True Range (ATR) einer Aktie.
-
-    Args:
-    high_prices (list): Liste der Höchstkurse.
-    low_prices (list): Liste der Tiefstkurse.
-    close_prices (list): Liste der Schlusskurse.
-    period (int): Die Periode, über die der ATR berechnet wird.
-
-    Returns:
-    float: Der berechnete ATR-Wert.
-    """
     tr_values = [max(high, low, previous_close) - min(low, previous_close) 
                  for high, low, previous_close in zip(high_prices[1:], low_prices[1:], close_prices[:-1])]
-    tr_values.insert(0, high_prices[0] - low_prices[0])  # Erster TR-Wert
-
-    # ATR berechnen, indem der Durchschnitt der TR-Werte über die angegebene Periode genommen wird
+    tr_values.insert(0, high_prices[0] - low_prices[0])
     atr = np.mean(tr_values[-period:])
     return atr
 
-# Funktion zur Berechnung der Position
+def calculate_sma(prices, period=20):
+    """Berechnet den einfachen gleitenden Durchschnitt (SMA) über eine gegebene Periode."""
+    if len(prices) < period:
+        raise ValueError("Nicht genug Daten, um den SMA zu berechnen.")
+    return np.mean(prices[-period:])
+
 def calculate_position(depot_size, risk_per_position, total_risk, p, ticker_symbol="AAPL"):
-    """
-    Berechnet die Anzahl der Aktien, den Kaufpreis und den Stop-Loss-Preis basierend auf verschiedenen Risikoparametern.
-
-    Args:
-    depot_size (int): Die Größe des Depots in USD.
-    risk_per_position (int): Das Risiko pro Position in Prozent.
-    total_risk (int): Das Gesamtrisiko des Portfolios in Prozent.
-    anzahl_positionen (int): Die Anzahl der Positionen.
-    p (float): Die Gewinnwahrscheinlichkeit.
-    ticker_symbol (str): Das Tickersymbol der Aktie.
-
-    Returns:
-    tuple: Anzahl der Aktien, Kaufpreis, ATR-basierter Stop-Loss-Preis, niedrigster Stop-Loss-Preis, 20%-Stop-Loss-Preis, ATR(21).
-    """
     high_prices, low_prices, close_prices = get_stock_data(ticker_symbol)
-    
-    # Der Kaufpreis ist der letzte Schlusskurs plus 0,1%
-    stock_price = high_prices[-1] * 1.001
-    
-    # Berechnen Sie den ATR (Average True Range) mit Periode 21
+    stock_price = high_prices[-1] * 1.001  # Kaufpreis leicht oberhalb des aktuellen Höchstkurses
     atr_21 = calculate_atr(high_prices, low_prices, close_prices, period=21)
-    
-    # Berechnen Sie das maximale Risiko für das Portfolio in USD
     max_portfolio_risk = depot_size * (total_risk / 100)
-    
-    # Berechnen Sie das maximale Risiko für eine einzelne Position in USD
     max_position_risk = depot_size * (risk_per_position / 100)
-    
-    # Stellen Sie sicher, dass das Risiko einer Position nicht das Gesamtrisiko des Portfolios übersteigt
     max_position_risk = min(max_position_risk, max_portfolio_risk)
     
-    # Limit für die Position auf 20% des Depotwerts
-    # max_depot_value_limit = depot_size * 0.20
-    
-    # Berechnen Sie den Stopploss-Preis basierend auf dem ATR
     stop_loss_price_atr = stock_price - (2 * atr_21)
+    stop_loss_price_sma_20 = calculate_sma(close_prices, period=20)  # Stop-Loss basierend auf SMA(20)
+    stop_loss_price_14_days = min(low_prices[-14:])  # Niedrigster Preis der letzten 14 Tage
     
-    # Berechnen Sie den Stopploss-Preis basierend auf -10% vom Kaufpreis
-    stop_loss_price_10 = stock_price * 0.9
-    
-    # Finden Sie den niedrigsten Preis der letzten 14 Tage
-    stop_loss_price_14_days = min(low_prices[-14:])
-    
-    # Berechnung des Kelly-Faktors
     q = 1 - p
     kelly_factor = p - (q / (p / q))
-    
-    return stock_price, stop_loss_price_atr, stop_loss_price_14_days, stop_loss_price_10, kelly_factor
+    return stock_price, stop_loss_price_atr, stop_loss_price_14_days, stop_loss_price_sma_20, kelly_factor
 
 def main():
-    # Parameter abfragen
     depot_size = float(input("Bitte geben Sie die Depotgröße ein: "))
     risk_per_position = float(input("Bitte geben Sie das Risiko pro Position in Prozent ein: "))
     total_risk = float(input("Bitte geben Sie das Gesamtrisiko des Portfolios in Prozent ein: "))
@@ -178,49 +116,37 @@ def main():
     
     while True:
         ticker_symbol = input("Bitte geben Sie das Tickersymbol ein: ")
-        purchase_price, stop_loss_price_atr, stop_loss_price_14_days, stop_loss_price_10, kelly_factor = calculate_position(depot_size, risk_per_position, total_risk, p, ticker_symbol=ticker_symbol)
+        purchase_price, stop_loss_price_atr, stop_loss_price_14_days, stop_loss_price_sma_20, kelly_factor = calculate_position(depot_size, risk_per_position, total_risk, p, ticker_symbol=ticker_symbol)
         
         print(f"Kaufpreis: ${purchase_price:.2f}")
-        
-        # Ausgabe der Stop-Loss-Preise und deren prozentuale Änderung zum Kaufpreis
         print(f"1. Stop-Loss-Preis (ATR-basiert): ${stop_loss_price_atr:.2f} ({((purchase_price - stop_loss_price_atr) / purchase_price) * 100:.2f}%)")
         print(f"2. Stop-Loss-Preis (niedrigster Preis der letzten 14 Tage): ${stop_loss_price_14_days:.2f} ({((purchase_price - stop_loss_price_14_days) / purchase_price) * 100:.2f}%)")
-        print(f"3. Stop-Loss-Preis (-10% vom Kaufpreis): ${stop_loss_price_10:.2f} ({((purchase_price - stop_loss_price_10) / purchase_price) * 100:.2f}%)")
+        print(f"3. Stop-Loss-Preis (SMA 20): ${stop_loss_price_sma_20:.2f} ({((purchase_price - stop_loss_price_sma_20) / purchase_price) * 100:.2f}%)")
         
-        # Abfrage, welches Stop-Loss-Wert verwendet werden soll
         while True:
             stop_loss_choice = input("Welchen Stop-Loss-Preis möchten Sie verwenden? (1/2/3): ")
             if stop_loss_choice in ['1', '2', '3']:
                 break
-            else:
-                print("Ungültige Auswahl. Bitte geben Sie 1, 2 oder 3 ein.")
-                
+        
         if stop_loss_choice == '1':
             stop_loss_price = stop_loss_price_atr
         elif stop_loss_choice == '2':
             stop_loss_price = stop_loss_price_14_days
         elif stop_loss_choice == '3':
-            stop_loss_price = stop_loss_price_10
+            stop_loss_price = stop_loss_price_sma_20
         
-        # Berechnung des Take-Profit-Preises basierend auf dem gewählten Stop-Loss-Preis
         take_profit_price = purchase_price + 3 * (purchase_price - stop_loss_price)
-        
-        # Berechnung der Anzahl der Aktien
         risk_per_share = purchase_price - stop_loss_price
         max_position_risk = depot_size * (risk_per_position / 100)
-        max_purchase_value = depot_size / anzahl_positionen  # depot_size / anzahl_positionen
+        max_purchase_value = depot_size / anzahl_positionen
         number_of_shares = min(max_position_risk / risk_per_share, max_purchase_value / purchase_price)
-        
-        # Anwendung des Kelly-Faktors
         number_of_shares = int(number_of_shares * kelly_factor)
         
-        # Berechnung der prozentualen Änderung zwischen Kaufpreis und Stop-Loss-Kurs
-        stop_loss_change_percentage = ((purchase_price - stop_loss_price) / purchase_price) * 100
+        print(f"Anzahl der Aktien: {number_of_shares}")
         
-        # Berechnung der prozentualen Änderung zwischen Kaufpreis und Take-Profit-Kurs
+        stop_loss_change_percentage = ((purchase_price - stop_loss_price) / purchase_price) * 100
         take_profit_change_percentage = ((take_profit_price - purchase_price) / purchase_price) * 100
         
-        # Erstellung der Ergebnistabelle
         results = {
             "Anzahl der Aktien": [int(number_of_shares)],
             "Kaufpreis (Stop Buy)": [f"${purchase_price:.2f}"],
@@ -229,50 +155,9 @@ def main():
         }
         
         df = pd.DataFrame(results)
-        
-        # Ausgabe der Ergebnisse in einer Tabelle
         print("\nErgebnisse:")
         display(df)
         
-        # Abfrage, ob eine Kauforder angelegt werden soll
-        place_order = input("Möchten Sie eine Kauforder anlegen? (1 = Ja, 2 = Nein): ")
-        if place_order == '1':
-            # Verbindung zu Interactive Brokers herstellen
-            app = TradingApp()
-            app.connect("127.0.0.1", 4002, clientId=1)
-
-            # Start a separate daemon thread to execute the websocket connection
-            con_thread = threading.Thread(target=websocket_con, args=(app,), daemon=True)
-            con_thread.start()
-            time.sleep(1)  # some latency added to ensure that the connection is established
-
-            # Wait for next valid order id
-            while app.nextValidOrderId is None:
-                time.sleep(0.1)
-
-            # Create the contract
-            contract = usTechStk(ticker_symbol)
-            
-            # Get the next valid order ID
-            parentOrderId = app.nextValidOrderId
-            
-            # Create the bracket order
-            bracket = bracketOrder(parentOrderId, "BUY", int(number_of_shares), purchase_price, take_profit_price, stop_loss_price)
-            
-            # Place the bracket order
-            for order in bracket:
-                app.placeOrder(order.orderId, contract, order)
-                time.sleep(1)  # some latency added to ensure that the order is placed
-
-            # Update the next valid order ID
-            app.nextValidOrderId += len(bracket)
-            
-            print("Order erfolgreich platziert.")
-            
-            # Disconnect the client
-            app.disconnect()
-        
-        # Abfrage, ob eine weitere Berechnung durchgeführt werden soll
         another_calculation = input("\nMöchten Sie eine weitere Berechnung durchführen? (1 = Ja, 2 = Nein): ")
         if another_calculation == '2':
             break
