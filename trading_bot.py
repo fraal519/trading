@@ -1,6 +1,7 @@
 import yfinance as yf
 from datetime import datetime, timedelta
 import pandas_ta as ta
+import time
 
 ticker = "AMZN"
 asset = yf.Ticker(ticker)
@@ -12,12 +13,14 @@ tradelog = []
 while True:
     start_date = (datetime.now()-timedelta(days=2)).strftime('%Y-%m-%d')
     df = asset.history(start=start_date, interval='1m')
+    
     del df['Dividends']
     del df['Stock Splits']
     del df['Volume']
     
     df['SMA_fast'] = ta.sma(df['Close'], interval_fast)
     df['SMA_slow'] = ta.sma(df['Close'], interval_slow)
+    #print(df)
     
     price = df.iloc[-1]['Close']
     if df.iloc[-1]['SMA_fast'] > df.iloc[-1]['SMA_slow'] and not currently_holding:
