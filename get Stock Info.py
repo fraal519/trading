@@ -2,15 +2,6 @@ import yfinance as yf
 import pandas_ta as ta
 import pandas as pd
 from IPython.display import display
-import sys
-
-# Ensure pandas_ta is installed
-try:
-    import pandas_ta as ta
-except ImportError:
-    import subprocess
-    subprocess.check_call([sys.executable, "-m", "pip", "install", "pandas_ta"])
-    import pandas_ta as ta
 
 def get_stock_data(symbol):
     try:
