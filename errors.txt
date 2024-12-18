@@ -1,0 +1,12 @@
+Traceback (most recent call last):
+  File "/Users/fraal/Downloads/Trading/trading-1/get Stock Info.py", line 2, in <module>
+    import pandas_ta as ta
+  File "/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/site-packages/pandas_ta/__init__.py", line 116, in <module>
+    from pandas_ta.core import *
+  File "/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/site-packages/pandas_ta/core.py", line 18, in <module>
+    from pandas_ta.momentum import *
+  File "/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/site-packages/pandas_ta/momentum/__init__.py", line 34, in <module>
+    from .squeeze_pro import squeeze_pro
+  File "/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/site-packages/pandas_ta/momentum/squeeze_pro.py", line 2, in <module>
+    from numpy import NaN as npNaN
+ImportError: cannot import name 'NaN' from 'numpy' (/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/site-packages/numpy/__init__.py). Did you mean: 'nan'?
