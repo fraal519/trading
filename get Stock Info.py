@@ -1,30 +1,25 @@
 import yfinance as yf
-import pandas_ta as ta
 import pandas as pd
 from IPython.display import display
 
 def get_stock_data(symbol):
-    try:
-        stock = yf.Ticker(symbol)
-        data = stock.history(period="1y")
-    except Exception as e:
-        print(f"Error fetching data for {symbol}: {e}")
-        return pd.DataFrame()
+    stock = yf.Ticker(symbol)
+    data = stock.history(period="1y")
     return data
 
 def calculate_indicators(data):
-    data['SMA5'] = ta.sma(data['Close'], length=5)
-    data['SMA10'] = ta.sma(data['Close'], length=10)
-    data['SMA20'] = ta.sma(data['Close'], length=20)
-    data['SMA50'] = ta.sma(data['Close'], length=50)
-    data['SMA100'] = ta.sma(data['Close'], length=100)
-    data['SMA200'] = ta.sma(data['Close'], length=200)
-    data['ATR21'] = ta.atr(data['High'], data['Low'], data['Close'], length=21)
+    data['SMA5'] = data['Close'].rolling(window=5).mean()
+    data['SMA10'] = data['Close'].rolling(window=10).mean()
+    data['SMA20'] = data['Close'].rolling(window=20).mean()
+    data['SMA50'] = data['Close'].rolling(window=50).mean()
+    data['SMA100'] = data['Close'].rolling(window=100).mean()
+    data['SMA200'] = data['Close'].rolling(window=200).mean()
+    data['ATR21'] = data['High'].rolling(window=21).max() - data['Low'].rolling(window=21).min()
     
-    bb = ta.bbands(data['Close'], length=20)
-    data['BB_upper'] = bb['BBU_20_2.0']
-    data['BB_middle'] = bb['BBM_20_2.0']
-    data['BB_lower'] = bb['BBL_20_2.0']
+    data['BB_middle'] = data['Close'].rolling(window=20).mean()
+    data['BB_std'] = data['Close'].rolling(window=20).std()
+    data['BB_upper'] = data['BB_middle'] + (2 * data['BB_std'])
+    data['BB_lower'] = data['BB_middle'] - (2 * data['BB_std'])
     
     return data
 
@@ -41,8 +36,6 @@ def calculate_trend(data):
         return "fallend"
 
 def calculate_lowest_low(data, days):
-    if len(data) < days:
-        return None
     return data['Low'].iloc[-days:].min()
 
 def calculate_highest_high(data, days):
@@ -50,12 +43,6 @@ def calculate_highest_high(data, days):
 
 def calculate_metrics(symbol):
     data = get_stock_data(symbol)
-    if data.empty:
-        print(f"No data available for {symbol}.")
-    if len(data) < 2:
-        print(f"Not enough data available for {symbol}.")
-        return {}
-    high_low_range = data['High'].iloc[-2] - data['Low'].iloc[-2]
     data = calculate_indicators(data)
     
     high_low_range = data['High'].iloc[-2] - data['Low'].iloc[-2]
