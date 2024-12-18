@@ -2,6 +2,7 @@ import yfinance as yf
 import pandas_ta as ta
 import pandas as pd
 from IPython.display import display
+from numpy import nan as npNaN
 
 def get_stock_data(symbol):
     stock = yf.Ticker(symbol)
