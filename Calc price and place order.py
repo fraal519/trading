@@ -118,7 +118,7 @@ def calculate_atr(high_prices, low_prices, close_prices, period=21):
     return atr
 
 # Funktion zur Berechnung der Position
-def calculate_position(depot_size=20000, risk_per_position=10, total_risk=5, anzahl_positionen=5, ticker_symbol="AAPL"):
+def calculate_position(depot_size=100000, risk_per_position=10, total_risk=5, anzahl_positionen=5, ticker_symbol="AAPL"):
     """
     Berechnet die Anzahl der Aktien, den Kaufpreis und den Stop-Loss-Preis basierend auf verschiedenen Risikoparametern.
 
@@ -134,8 +134,8 @@ def calculate_position(depot_size=20000, risk_per_position=10, total_risk=5, anz
     """
     high_prices, low_prices, close_prices = get_stock_data(ticker_symbol)
     
-    # Der Kaufpreis ist der letzte Schlusskurs plus 0,1%
-    stock_price = high_prices[-1] * 1.001
+    # Der Kaufpreis ist der letzte Schlusskurs plus 0,5%
+    stock_price = high_prices[-1] * 1.005
     
     # Berechnen Sie den ATR (Average True Range) mit Periode 21
     atr_21 = calculate_atr(high_prices, low_prices, close_prices, period=21)
@@ -195,8 +195,8 @@ def main():
         
         # Berechnung der Anzahl der Aktien
         risk_per_share = purchase_price - stop_loss_price
-        max_position_risk = 20000 * (10 / 100)
-        max_purchase_value = 20000 / 5  # depot_size / anzahl_positionen
+        max_position_risk = 100000 * (10 / 100)
+        max_purchase_value = 100000 / 5  # depot_size / anzahl_positionen
         number_of_shares = min(max_position_risk // risk_per_share, max_purchase_value // purchase_price)
         
         # Berechnung der prozentualen Änderung zwischen Kaufpreis und Stop-Loss-Kurs
