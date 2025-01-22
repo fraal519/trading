@@ -136,7 +136,7 @@ def calculate_position(depot_size=100000, risk_per_position=10, total_risk=5, an
     
     # Der Kaufpreis ist der letzte Schlusskurs plus 0,5%
     stock_price = high_prices[-1] * 1.005
-    
+        
     # Berechnen Sie den ATR (Average True Range) mit Periode 21
     atr_21 = calculate_atr(high_prices, low_prices, close_prices, period=21)
     
@@ -168,6 +168,7 @@ def main():
         ticker_symbol = input("Bitte geben Sie das Tickersymbol ein: ")
         purchase_price, stop_loss_price_atr, stop_loss_price_14_days, stop_loss_price_10, atr_21 = calculate_position(ticker_symbol=ticker_symbol)
         
+      
         print(f"Kaufpreis: ${purchase_price:.2f}")
         
         # Ausgabe der Stop-Loss-Preise und deren prozentuale Änderung zum Kaufpreis
