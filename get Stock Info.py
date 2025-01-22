@@ -3,6 +3,15 @@ import pandas as pd
 from IPython.display import display
 
 def get_stock_data(symbol):
+    """
+    Fetch historical stock data for the given symbol over the past year.
+
+    Parameters:
+    symbol (str): The stock ticker symbol.
+
+    Returns:
+    pandas.DataFrame: Historical stock data.
+    """
     stock = yf.Ticker(symbol)
     data = stock.history(period="1y")
     return data
@@ -24,6 +33,14 @@ def calculate_indicators(data):
     return data
 
 def calculate_percentage_change(data, days):
+    if days >= len(data):
+        return None
+    
+    start_price = data['Close'].iloc[-days-1]
+    end_price = data['Close'].iloc[-1]
+    percentage_change = (end_price - start_price) / start_price * 100
+    
+    return percentage_change
     return (data['Close'].iloc[-1] - data['Close'].iloc[-days-1]) / data['Close'].iloc[-days-1] * 100
 
 def calculate_distance_to_sma(data, sma_column):
