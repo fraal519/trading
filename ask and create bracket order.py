@@ -41,6 +41,15 @@ def websocket_con():
     app.run()
 
 def usTechStk(symbol, sec_type="STK", currency="USD", exchange="SMART"):
+    """
+    Create a US stock contract for Interactive Brokers API.
+
+    :param symbol: The ticker symbol of the stock.
+    :param sec_type: The security type, default is "STK".
+    :param currency: The currency, default is "USD".
+    :param exchange: The exchange, default is "SMART".
+    :return: A Contract object with the specified parameters.
+    """
     contract = Contract()
     contract.symbol = symbol
     contract.secType = sec_type
@@ -60,7 +69,7 @@ def bracketOrder(parentOrderId, action, quantity, limitPrice, takeProfitPrice, s
     parent = Order()
     parent.orderId = parentOrderId
     parent.action = action
-    parent.orderType = "STP"
+    parent.orderType = "MKT"
     parent.totalQuantity = quantity
     parent.auxPrice = limitPrice
     parent.transmit = False
@@ -69,7 +78,7 @@ def bracketOrder(parentOrderId, action, quantity, limitPrice, takeProfitPrice, s
     
     takeProfit = Order()
     takeProfit.orderId = parentOrderId + 1
-    takeProfit.action = "SELL"
+    takeProfit.action = "SELL" if action == "BUY" else "BUY"
     takeProfit.orderType = "LMT"
     takeProfit.totalQuantity = quantity
     takeProfit.lmtPrice = takeProfitPrice
@@ -80,7 +89,7 @@ def bracketOrder(parentOrderId, action, quantity, limitPrice, takeProfitPrice, s
     
     stopLoss = Order()
     stopLoss.orderId = parentOrderId + 2
-    stopLoss.action = "SELL"
+    stopLoss.action = "SELL" if action == "BUY" else "BUY"
     stopLoss.orderType = "STP"
     stopLoss.totalQuantity = quantity
     stopLoss.auxPrice = stopLossPrice

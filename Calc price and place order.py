@@ -161,12 +161,12 @@ def calculate_position(depot_size=100000, risk_per_position=10, total_risk=5, an
     # Finden Sie den niedrigsten Preis der letzten 14 Tage
     stop_loss_price_14_days = min(low_prices[-14:])
     
-    return stock_price, stop_loss_price_atr, stop_loss_price_14_days, stop_loss_price_10, atr_21
+    return stock_price, stop_loss_price_atr, stop_loss_price_14_days, stop_loss_price_10, atr_21, risk_per_position
 
-def main():
+def main(depot_size=100000, anzahl_positionen=5):
     while True:
         ticker_symbol = input("Bitte geben Sie das Tickersymbol ein: ")
-        purchase_price, stop_loss_price_atr, stop_loss_price_14_days, stop_loss_price_10, atr_21 = calculate_position(ticker_symbol=ticker_symbol)
+        purchase_price, stop_loss_price_atr, stop_loss_price_14_days, stop_loss_price_10, atr_21, risk_per_position = calculate_position(ticker_symbol=ticker_symbol)
         
       
         print(f"Kaufpreis: ${purchase_price:.2f}")
@@ -196,9 +196,9 @@ def main():
         
         # Berechnung der Anzahl der Aktien
         risk_per_share = purchase_price - stop_loss_price
-        max_position_risk = 100000 * (10 / 100)
-        max_purchase_value = 100000 / 5  # depot_size / anzahl_positionen
-        number_of_shares = min(max_position_risk // risk_per_share, max_purchase_value // purchase_price)
+        max_position_risk = 100000 * (risk_per_position / 100)
+        max_purchase_value = depot_size / anzahl_positionen  # depot_size / anzahl_positionen
+        number_of_shares = min(int(max_position_risk // risk_per_share), int(max_purchase_value // purchase_price))
         
         # Berechnung der prozentualen Änderung zwischen Kaufpreis und Stop-Loss-Kurs
         stop_loss_change_percentage = ((purchase_price - stop_loss_price) / purchase_price) * 100
@@ -249,9 +249,7 @@ def main():
             for order in bracket:
                 app.placeOrder(order.orderId, contract, order)
                 time.sleep(1)  # some latency added to ensure that the order is placed
-
-            # Update the next valid order ID
-            app.nextValidOrderId += len(bracket)
+                app.nextValidOrderId += 1
             
             print("Order erfolgreich platziert.")
             

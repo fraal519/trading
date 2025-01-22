@@ -11,10 +11,15 @@ import time
 import logging
 
 # Setze Logging-Level auf WARN, um weniger Ausgaben zu sehen
-logging.basicConfig(level=logging.WARN)
+logging.basicConfig(level=logging.WARNING)
 
 class TestApp(EClient, EWrapper):
     def __init__(self):
+        """
+        Initialize the TestApp instance.
+        This method sets up the initial state of the TestApp instance, including
+        initializing the EClient and setting the next_order_id to None.
+        """
         EClient.__init__(self, self)
         self.next_order_id = None
 
@@ -26,7 +31,17 @@ class TestApp(EClient, EWrapper):
         print(f"openOrder: {orderId}, contract: {contract}, order: {order}, Maintenance Margin: {orderState.maintMarginChange}")
 
     def orderStatus(self, orderId: OrderId, status: str, filled: float, remaining: float, avgFillPrice: float, permId: int, parentId: int, lastFillPrice: float, clientId: int, whyHeld: str, mktCapPrice: float):
-        print(f"orderStatus. orderId: {orderId}, status:  {status}, filled: {filled}, remaining: {remaining}, avgFillPrice: {avgFillPrice}, permId: {permId}, parentId: {parentId}, lastFillPrice: {lastFillPrice}, clientId: {clientId}, whyHeld: {whyHeld}, mktCapPrice: {mktCapPrice}")
+    def create_bracket_order(self, symbol, quantity, limit_price, take_profit_price, stop_loss_price):
+        """
+        Create a bracket order with a parent limit order, a take profit order, and a stop loss order.
+
+        Parameters:
+        symbol (str): The ticker symbol of the stock.
+        quantity (int): The number of shares to buy.
+        limit_price (float): The limit price for the parent order.
+        take_profit_price (float): The limit price for the take profit order.
+        stop_loss_price (float): The stop price for the stop loss order.
+        """
 
     def execDetails(self, reqId: int, contract: Contract, execution: Execution):
         print(f"execDetails. reqId: {reqId}, contract: {contract}, execution: {execution}")
@@ -61,47 +76,96 @@ class TestApp(EClient, EWrapper):
         stop_loss.orderType = "STP"
         stop_loss.auxPrice = stop_loss_price
         stop_loss.action = "SELL"
-        stop_loss.totalQuantity = quantity
         stop_loss.transmit = True
+
+"""
+Fetch historical stock data.
+
+Parameters:
+    ticker_symbol (str): The ticker symbol of the stock.
+    period (str): The period for which to fetch the data (default is "1mo").
+
+Returns:
+    tuple: Lists of high, low, and close prices.
+"""
 
         self.placeOrder(parent.orderId, contract, parent)
         self.placeOrder(take_profit.orderId, contract, take_profit)
         self.placeOrder(stop_loss.orderId, contract, stop_loss)
 
-def run_loop():
-    app.run()
+def run_loop(app):
+    """
+    Run the main loop for the Interactive Brokers API.
+    This function keeps the API connection alive and processes incoming messages.
+    """
+def calculate_atr(high_prices, low_prices, close_prices, period=21):
+    """
+    Calculate the Average True Range (ATR) for a given period.
+
+    Parameters:
+    high_prices (list): List of high prices.
+    low_prices (list): List of low prices.
+    close_prices (list): List of close prices.
+    period (int): The period over which to calculate the ATR (default is 21).
+
+    Returns:
+    float: The calculated ATR value.
+    """
 
 # Funktion zum Abrufen der historischen Aktiendaten
 def get_stock_data(ticker_symbol, period="1mo"):
     stock = yf.Ticker(ticker_symbol)
-    hist = stock.history(period=period)
+def calculate_position(depot_size=20000, risk_per_position=10, total_risk=5, anzahl_positionen=5, ticker_symbol="AAPL", multiplier=1.001):
+    """
+    Calculate the position size and stop-loss prices based on the given parameters.
+
+    Parameters:
+    depot_size (int): The size of the depot in monetary units.
+    risk_per_position (int): The risk per position as a percentage of the depot size.
+    total_risk (int): The total risk as a percentage of the depot size.
+    anzahl_positionen (int): The number of positions.
+    ticker_symbol (str): The ticker symbol of the stock.
+    multiplier (float): The multiplier to adjust the stock price.
+
+    Returns:
+    tuple: The stock price, stop-loss price based on ATR, stop-loss price based on the lowest price of the last 14 days, 
+           stop-loss price based on 20% of the stock price, and the ATR value.
+    """
     return hist['High'].tolist(), hist['Low'].tolist(), hist['Close'].tolist()
 
 # Funktion zur Berechnung des Average True Range (ATR)
 def calculate_atr(high_prices, low_prices, close_prices, period=21):
-    tr_values = [max(high, low, previous_close) - min(low, previous_close) 
+    tr_values = [max(high - low, abs(high - previous_close), abs(low - previous_close)) 
                  for high, low, previous_close in zip(high_prices[1:], low_prices[1:], close_prices[:-1])]
     tr_values.insert(0, high_prices[0] - low_prices[0])  # Erster TR-Wert
     atr = np.mean(tr_values[-period:])
     return atr
+def main():
+    """
+    Main function to connect to Interactive Brokers API, fetch stock data, calculate positions,
+    and optionally create bracket orders based on user input.
 
+    Parameters:
+    depot_size (int): The size of the depot in dollars (default is 20000).
+    risk_per_position (int): The risk per position as a percentage (default is 10).
+    """
 # Funktion zur Berechnung der Position
-def calculate_position(depot_size=20000, risk_per_position=10, total_risk=5, anzahl_positionen=5, ticker_symbol="AAPL"):
+def calculate_position(depot_size=20000, risk_per_position=10, total_risk=5, anzahl_positionen=5, ticker_symbol="AAPL", multiplier=1.001):
     high_prices, low_prices, close_prices = get_stock_data(ticker_symbol)
-    stock_price = high_prices[-1] * 1.001
+    # Calculate stock price with the given multiplier
+    stock_price = high_prices[-1] * multiplier
     atr_21 = calculate_atr(high_prices, low_prices, close_prices, period=21)
     max_portfolio_risk = depot_size * (total_risk / 100)
     max_position_risk = depot_size * (risk_per_position / 100)
     max_position_risk = min(max_position_risk, max_portfolio_risk)
     max_depot_value_limit = depot_size * 0.20
     stop_loss_price_atr = stock_price - (2 * atr_21)
-    stop_loss_price_20 = stock_price * 0.8
-    stop_loss_price_14_days = min(low_prices[-14:])
+def main():
     return stock_price, stop_loss_price_atr, stop_loss_price_14_days, stop_loss_price_20, atr_21
-
+def main(depot_size=20000, risk_per_position=10):
 def main():
     global app
-    app = TestApp()
+    api_thread = threading.Thread(target=run_loop, args=(app,), daemon=True)
     app.connect("127.0.0.1", 4002, 1)
     
     # Hintergrundthread für die API-Ereignisschleife
@@ -127,7 +191,7 @@ def main():
 
         # Berechnungen durchführen
         try:
-            purchase_price, stop_loss_price_atr, stop_loss_price_14_days, stop_loss_price_20, atr_21 = calculate_position(ticker_symbol=ticker_symbol)
+            purchase_price, stop_loss_price_atr, stop_loss_price_14_days, stop_loss_price_20, atr_21 = calculate_position(ticker_symbol=ticker_symbol, multiplier=1.001)
             
             print(f"Kaufpreis: ${purchase_price:.2f}")
             print(f"1. Stop-Loss-Preis (ATR-basiert): ${stop_loss_price_atr:.2f} ({((purchase_price - stop_loss_price_atr) / purchase_price) * 100:.2f}%)")
@@ -154,10 +218,10 @@ def main():
             stop_loss_price = stop_loss_price_20
         
         take_profit_price = purchase_price + 3 * (purchase_price - stop_loss_price)
-        risk_per_share = purchase_price - stop_loss_price
-        max_position_risk = 20000 * (10 / 100)
+        max_position_risk = depot_size * (risk_per_position / 100)
+        max_purchase_value = depot_size / 5
         max_purchase_value = 20000 / 5
-        number_of_shares = min(max_position_risk // risk_per_share, max_purchase_value // purchase_price)
+        number_of_shares = min(int(max_position_risk / risk_per_share), int(max_purchase_value / purchase_price))
         
         stop_loss_change_percentage = ((purchase_price - stop_loss_price) / purchase_price) * 100
         take_profit_change_percentage = ((take_profit_price - purchase_price) / purchase_price) * 100
@@ -182,7 +246,12 @@ def main():
                 print("Ungültige Auswahl. Bitte geben Sie 1 oder 2 ein.")
         
         if create_order == '1':
+            order_id_timeout = 10  # Timeout in seconds
+            start_time = time.time()
             while app.next_order_id is None:
+                if time.time() - start_time > order_id_timeout:
+                    print("Timeout: Keine gültige Order-ID erhalten.")
+                    return
                 time.sleep(0.1)
             app.create_bracket_order(ticker_symbol, int(number_of_shares), purchase_price, take_profit_price, stop_loss_price)
         

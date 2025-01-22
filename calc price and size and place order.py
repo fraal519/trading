@@ -79,8 +79,22 @@ def get_stock_data(ticker_symbol, period="1mo"):
     return hist['High'].tolist(), hist['Low'].tolist(), hist['Close'].tolist()
 
 def calculate_atr(high_prices, low_prices, close_prices, period=21):
+    """
+    Calculate the Average True Range (ATR) for a given period.
+
+    Parameters:
+    high_prices (list): List of high prices.
+    low_prices (list): List of low prices.
+    close_prices (list): List of close prices.
+    period (int): The period over which to calculate the ATR.
+
+    Returns:
+    float: The calculated ATR value.
+    """
     tr_values = [max(high, low, previous_close) - min(low, previous_close) 
-                 for high, low, previous_close in zip(high_prices[1:], low_prices[1:], close_prices[:-1])]
+                             for high, low, previous_close in zip(high_prices[1:], low_prices[1:], close_prices[:-1])]
+                tr_values = [max(high, previous_close) - min(low, previous_close) 
+                             for high, low, previous_close in zip(high_prices[1:], low_prices[1:], close_prices[:-1])]
     tr_values.insert(0, high_prices[0] - low_prices[0])
     atr = np.mean(tr_values[-period:])
     return atr
@@ -102,7 +116,7 @@ def calculate_position(depot_size, risk_per_position, total_risk, p, ticker_symb
     stop_loss_price_atr = stock_price - (2 * atr_21)
     stop_loss_price_sma_20 = calculate_sma(close_prices, period=20)  # Stop-Loss basierend auf SMA(20)
     stop_loss_price_14_days = min(low_prices[-14:])  # Niedrigster Preis der letzten 14 Tage
-    
+    kelly_factor = p - q
     q = 1 - p
     kelly_factor = p - (q / (p / q))
     return stock_price, stop_loss_price_atr, stop_loss_price_14_days, stop_loss_price_sma_20, kelly_factor
@@ -139,7 +153,7 @@ def main():
         risk_per_share = purchase_price - stop_loss_price
         max_position_risk = depot_size * (risk_per_position / 100)
         max_purchase_value = depot_size / anzahl_positionen
-        number_of_shares = min(max_position_risk / risk_per_share, max_purchase_value / purchase_price)
+        number_of_shares = min(max_position_risk // risk_per_share, max_purchase_value // purchase_price)
         number_of_shares = int(number_of_shares * kelly_factor)
         
         print(f"Anzahl der Aktien: {number_of_shares}")
