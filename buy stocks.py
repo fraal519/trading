@@ -171,7 +171,7 @@ def stock_buy_program():
         parentOrderId = app.nextValidOrderId
         
         # Create the bracket order
-        bracket = bracketOrder(parentOrderId, "BUY", int(position_size), buy_price, take_profit[1], stop_loss[1])
+        bracket = bracketOrder(parentOrderId, "BUY", int(selected_position_size), buy_price, take_profit[1], stop_loss[1])
         
         # Place the bracket order
         for order in bracket:
@@ -217,7 +217,7 @@ def select_option(option_name, options):
 def calculate_buy_price_option1(ticker_symbol):
     stock = yf.Ticker(ticker_symbol)
     hist = stock.history(period="1d")
-    return hist['Close'][0]
+    return hist['Close'].iloc[0]
 
 def calculate_buy_price_option2(ticker_symbol):
     stock = yf.Ticker(ticker_symbol)
@@ -248,7 +248,6 @@ def calculate_take_profit_option3(buy_price):
     return (buy_price, buy_price * 1.2)
 
 def calculate_position_size_option1(buy_price, stop_loss, account_balance, position_size, risk_per_trade, total_risk, win_probability):
-
     """
     Calculates the position size/number of shares using the first option (max loss < 8% of position size).
 
