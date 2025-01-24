@@ -7,6 +7,7 @@ from ibapi.contract import Contract
 from ibapi.order import Order
 from ibapi.common import OrderId
 import threading
+import numpy as np
 
 # Global variables to store the user-provided parameters
 account_balance = None
@@ -53,7 +54,7 @@ def bracketOrder(parentOrderId, action, quantity, limitPrice, takeProfitPrice, s
     parent = Order()
     parent.orderId = parentOrderId
     parent.action = action
-    parent.orderType = "STP"
+    parent.orderType = "STP" if action == "BUY" else "LMT"
     parent.totalQuantity = quantity
     parent.auxPrice = None if parent.orderType == "LMT" else round(limitPrice, 2)
     parent.transmit = False
@@ -118,33 +119,44 @@ def stock_buy_program():
     ticker_symbol = input("Enter the stock ticker symbol: ")
     
     # Step 2: Calculate the buy price
+    stock = yf.Ticker(ticker_symbol)
+    current_price = stock.history(period="1d")['Close'].iloc[0]
+    prev_day_high = stock.history(period="1d")['High'].iloc[0]
+    prev_day_close = stock.history(period="1d")['Close'].iloc[0]
+    
+    print(f"Current price for {ticker_symbol}: {current_price:.2f}")
+    
     buy_price_options = [
-        calculate_buy_price_option1(ticker_symbol),
-        calculate_buy_price_option2(ticker_symbol),
-        calculate_buy_price_option3(ticker_symbol)
+        (prev_day_high * 1.005, "STP BUY", (prev_day_high * 1.005 - current_price) / current_price * 100),
+        (prev_day_close * 1.01, "STP BUY", (prev_day_close * 1.01 - current_price) / current_price * 100),
+        (current_price * 1.005, "BUY LMT", (current_price * 1.005 - current_price) / current_price * 100)
     ]
     buy_price = select_option("Buy Price", buy_price_options)
     
     # Step 3: Calculate the stop loss
+    atr = stock.history(period="21d")['Close'].diff().abs().mean()
+    sma_21 = stock.history(period="21d")['Close'].mean()
+    lowest_low_14d = stock.history(period="14d")['Low'].min()
+    
     stop_loss_options = [
-        calculate_stop_loss_option1(buy_price, ticker_symbol),
-        calculate_stop_loss_option2(buy_price, ticker_symbol),
-        calculate_stop_loss_option3(buy_price, ticker_symbol)
+        (buy_price[0], buy_price[0] - atr, (buy_price[0] - (buy_price[0] - atr)) / buy_price[0] * 100),
+        (buy_price[0], buy_price[0] - sma_21 * 0.975, (buy_price[0] - (buy_price[0] - sma_21 * 0.975)) / buy_price[0] * 100),
+        (buy_price[0], lowest_low_14d, (buy_price[0] - lowest_low_14d) / buy_price[0] * 100)
     ]
     stop_loss = select_option("Stop Loss", stop_loss_options)
     
     # Step 4: Calculate the take profit
     take_profit_options = [
-        calculate_take_profit_option1(buy_price, stop_loss[1]),
-        calculate_take_profit_option2(buy_price, stop_loss[1]),
-        calculate_take_profit_option3(buy_price)
+        (buy_price[0], buy_price[0] + (buy_price[0] - stop_loss[1]) * 2, (buy_price[0] + (buy_price[0] - stop_loss[1]) * 2 - buy_price[0]) / buy_price[0] * 100),
+        (buy_price[0], buy_price[0] + (buy_price[0] - stop_loss[1]) * 3, (buy_price[0] + (buy_price[0] - stop_loss[1]) * 3 - buy_price[0]) / buy_price[0] * 100),
+        (buy_price[0], buy_price[0] * 1.2, (buy_price[0] * 1.2 - buy_price[0]) / buy_price[0] * 100)
     ]
     take_profit = select_option("Take Profit", take_profit_options)
     
     # Step 5: Calculate the position size/number of shares
     position_size_options = [
-        calculate_position_size_option1(buy_price, stop_loss[1], account_balance, position_size, risk_per_trade, total_risk, win_probability),
-        calculate_position_size_option2(buy_price, stop_loss[1], account_balance)
+        (buy_price[0], account_balance * 0.08 / (buy_price[0] - stop_loss[1]), account_balance * 0.08 / (buy_price[0] - stop_loss[1]) / buy_price[0]),
+        (buy_price[0], account_balance * 0.04 / (buy_price[0] - stop_loss[1]), account_balance * 0.04 / (buy_price[0] - stop_loss[1]) / buy_price[0])
     ]
     selected_position_size = select_option("Position Size", position_size_options)[2]
     
@@ -171,7 +183,7 @@ def stock_buy_program():
         parentOrderId = app.nextValidOrderId
         
         # Create the bracket order
-        bracket = bracketOrder(parentOrderId, "BUY", int(selected_position_size), buy_price, take_profit[1], stop_loss[1])
+        bracket = bracketOrder(parentOrderId, "BUY", int(selected_position_size), buy_price[0], take_profit[1], stop_loss[1])
         
         # Place the bracket order
         for order in bracket:
@@ -189,12 +201,20 @@ def stock_buy_program():
         stock_buy_program()
 
 def format_option(option_name, option):
-    if option_name == "Take Profit":
-        return f"Buy Price: {option[0]:.2f}, Take Profit: {option[1]:.2f}, Difference: {(option[1] - option[0]) / option[0] * 100:.2f}%"
-    elif option_name == "Position Size":
-        return f"Buy Price: {option[0]:.2f}, Position Size: {option[1]:.2f}, Shares: {option[2]:.0f}"
+    if option is None:
+        return "No data available"
+    
+    if isinstance(option, (list, tuple)):
+        if option_name == "Buy Price":
+            return f"Buy Price: {option[0]:.2f}, Order Type: {option[1]}, Difference to Current Price: {option[2]:.2f}%"
+        elif option_name == "Take Profit":
+            return f"Buy Price: {option[0]:.2f}, Take Profit: {option[1]:.2f}, Difference: {option[2]:.2f}%"
+        elif option_name == "Position Size":
+            return f"Buy Price: {option[0]:.2f}, Position Size: {option[1]:.2f}, Shares: {option[2]:.0f}"
+        else:
+            return f"Buy Price: {option[0]:.2f}, Stop Loss: {option[1]:.2f}, Difference: {option[2]:.2f}%"
     else:
-        return f"Buy Price: {option[0]:.2f}, Stop Loss: {option[1]:.2f}, Difference: {(option[0] - option[1]) / option[0] * 100:.2f}%"
+        return f"{option_name}: {option:.2f}"
 
 def select_option(option_name, options):
     """
@@ -213,73 +233,6 @@ def select_option(option_name, options):
     
     selected_option = int(input(f"Enter the number of the {option_name} option you want to select: "))
     return options[selected_option - 1]
-
-def calculate_buy_price_option1(ticker_symbol):
-    stock = yf.Ticker(ticker_symbol)
-    hist = stock.history(period="1d")
-    return hist['Close'].iloc[0]
-
-def calculate_buy_price_option2(ticker_symbol):
-    stock = yf.Ticker(ticker_symbol)
-    hist = stock.history(period="5d")
-    return hist['Close'].mean()
-
-def calculate_buy_price_option3(ticker_symbol):
-    stock = yf.Ticker(ticker_symbol)
-    hist = stock.history(period="1mo")
-    return hist['Close'].mean()
-
-def calculate_stop_loss_option1(buy_price, ticker_symbol):
-    return (buy_price, buy_price * 0.95)
-
-def calculate_stop_loss_option2(buy_price, ticker_symbol):
-    return (buy_price, buy_price * 0.90)
-
-def calculate_stop_loss_option3(buy_price, ticker_symbol):
-    return (buy_price, buy_price * 0.85)
-
-def calculate_take_profit_option1(buy_price, stop_loss):
-    return (buy_price, buy_price + (buy_price - stop_loss) * 2)
-
-def calculate_take_profit_option2(buy_price, stop_loss):
-    return (buy_price, buy_price + (buy_price - stop_loss) * 3)
-
-def calculate_take_profit_option3(buy_price):
-    return (buy_price, buy_price * 1.2)
-
-def calculate_position_size_option1(buy_price, stop_loss, account_balance, position_size, risk_per_trade, total_risk, win_probability):
-    """
-    Calculates the position size/number of shares using the first option (max loss < 8% of position size).
-
-    Args:
-        buy_price (float): The buy price of the stock.
-        stop_loss (float): The stop loss price.
-        account_balance (float): The account balance in USD.
-
-    Returns:
-        A tuple containing the buy price, position size, and the number of shares.
-    """
-    max_loss = account_balance * 0.08
-    position_size_usd = max_loss / (buy_price - stop_loss)
-    num_shares = position_size_usd / buy_price
-    return (buy_price, position_size_usd, num_shares)
-
-def calculate_position_size_option2(buy_price, stop_loss, account_balance):
-    """
-    Calculates the position size/number of shares using the second option (max loss < 4% of account balance).
-
-    Args:
-        buy_price (float): The buy price of the stock.
-        stop_loss (float): The stop loss price.
-        account_balance (float): The account balance.
-
-    Returns:
-        A tuple containing the buy price, position size, and the number of shares.
-    """
-    max_loss = account_balance * 0.04
-    position_size_usd = max_loss / (buy_price - stop_loss)
-    num_shares = position_size_usd / buy_price
-    return (buy_price, position_size_usd, num_shares)
 
 # Get user parameters
 get_user_parameters()
