@@ -80,7 +80,7 @@ def bracketOrder(parentOrderId, action, quantity, limitPrice, takeProfitPrice, s
     return [parent, takeProfit, stopLoss]
 
 # Funktion zum Abrufen der historischen Aktiendaten
-def get_stock_data(ticker_symbol, period="1mo"):
+def get_stock_data(ticker_symbol, period="3mo"):
     """
     Ruft die historischen Daten für eine Aktie von Yahoo Finance ab.
 
@@ -117,21 +117,24 @@ def calculate_atr(high_prices, low_prices, close_prices, period=21):
     atr = np.mean(tr_values[-period:])
     return atr
 
-# Funktion zur Berechnung der Position
-def calculate_position(depot_size=100000, risk_per_position=10, total_risk=5, anzahl_positionen=5, ticker_symbol="AAPL"):
+# Funktion zur Berechnung des einfachen gleitenden Durchschnitts (SMA)
+def calculate_sma(close_prices, period=21):
     """
-    Berechnet die Anzahl der Aktien, den Kaufpreis und den Stop-Loss-Preis basierend auf verschiedenen Risikoparametern.
+    Berechnet den einfachen gleitenden Durchschnitt (SMA) für eine gegebene Periode.
 
     Args:
-    depot_size (int): Die Größe des Depots in USD.
-    risk_per_position (int): Das Risiko pro Position in Prozent.
-    total_risk (int): Das Gesamtrisiko des Portfolios in Prozent.
-    anzahl_positionen (int): Die Anzahl der Positionen.
-    ticker_symbol (str): Das Tickersymbol der Aktie.
+    close_prices (list): Liste der Schlusskurse.
+    period (int): Die Periode für den SMA.
 
     Returns:
-    tuple: Anzahl der Aktien, Kaufpreis, ATR-basierter Stop-Loss-Preis, niedrigster Stop-Loss-Preis, 20%-Stop-Loss-Preis, ATR(21).
+    float: Der berechnete SMA-Wert oder None, wenn nicht genügend Daten vorhanden sind.
     """
+    if len(close_prices) < period:
+        print(f"Warnung: Nicht genügend Daten für SMA{period}. Erforderlich: {period}, Vorhanden: {len(close_prices)}")
+        return None  # Rückgabe von None, wenn nicht genügend Daten vorhanden sind
+    return np.mean(close_prices[-period:])
+
+def calculate_position(depot_size=100000, risk_per_position=10, total_risk=5, anzahl_positionen=5, ticker_symbol="AAPL"):
     high_prices, low_prices, close_prices = get_stock_data(ticker_symbol)
     
     # Der Kaufpreis ist der letzte Schlusskurs plus 0,5%
@@ -139,6 +142,18 @@ def calculate_position(depot_size=100000, risk_per_position=10, total_risk=5, an
         
     # Berechnen Sie den ATR (Average True Range) mit Periode 21
     atr_21 = calculate_atr(high_prices, low_prices, close_prices, period=21)
+    
+    # Berechnen Sie den SMA21
+    sma_21 = calculate_sma(close_prices, period=21)
+    
+    # Stop-Loss basierend auf dem SMA21 (2,5 % unter dem SMA21)
+    if sma_21 is not None:
+        stop_loss_price_sma = sma_21 * 0.975
+    else:
+        stop_loss_price_sma = None  # Setze den Wert auf None, falls der SMA nicht berechnet werden kann
+    
+    # Berechnen Sie den niedrigsten Preis der letzten 14 Tage
+    stop_loss_price_14_days = min(low_prices[-14:])
     
     # Berechnen Sie das maximale Risiko für das Portfolio in USD
     max_portfolio_risk = depot_size * (total_risk / 100)
@@ -149,19 +164,7 @@ def calculate_position(depot_size=100000, risk_per_position=10, total_risk=5, an
     # Stellen Sie sicher, dass das Risiko einer Position nicht das Gesamtrisiko des Portfolios übersteigt
     max_position_risk = min(max_position_risk, max_portfolio_risk)
     
-    # Limit für die Position auf 20% des Depotwerts
-    max_depot_value_limit = depot_size * 0.20
-    
-    # Berechnen Sie den Stopploss-Preis basierend auf dem ATR
-    stop_loss_price_atr = stock_price - (2 * atr_21)
-    
-    # Berechnen Sie den Stopploss-Preis basierend auf -10% vom Kaufpreis
-    stop_loss_price_10 = stock_price * 0.9
-    
-    # Finden Sie den niedrigsten Preis der letzten 14 Tage
-    stop_loss_price_14_days = min(low_prices[-14:])
-    
-    return stock_price, stop_loss_price_atr, stop_loss_price_14_days, stop_loss_price_10, atr_21, risk_per_position
+    return stock_price, stop_loss_price_sma, stop_loss_price_14_days, atr_21, risk_per_position
 
 def main(depot_size=100000, anzahl_positionen=5):
     while True:
@@ -174,7 +177,7 @@ def main(depot_size=100000, anzahl_positionen=5):
         # Ausgabe der Stop-Loss-Preise und deren prozentuale Änderung zum Kaufpreis
         print(f"1. Stop-Loss-Preis (ATR-basiert): ${stop_loss_price_atr:.2f} ({((purchase_price - stop_loss_price_atr) / purchase_price) * 100:.2f}%)")
         print(f"2. Stop-Loss-Preis (niedrigster Preis der letzten 14 Tage): ${stop_loss_price_14_days:.2f} ({((purchase_price - stop_loss_price_14_days) / purchase_price) * 100:.2f}%)")
-        print(f"3. Stop-Loss-Preis (-10% vom Kaufpreis): ${stop_loss_price_10:.2f} ({((purchase_price - stop_loss_price_10) / purchase_price) * 100:.2f}%)")
+        print(f"3. Stop-Loss-Preis (2,5 % unter SMA21): ${stop_loss_price_sma:.2f} ({((purchase_price - stop_loss_price_sma) / purchase_price) * 100:.2f}%)")
         
         # Abfrage, welches Stop-Loss-Wert verwendet werden soll
         while True:
@@ -189,7 +192,9 @@ def main(depot_size=100000, anzahl_positionen=5):
         elif stop_loss_choice == '2':
             stop_loss_price = stop_loss_price_14_days
         elif stop_loss_choice == '3':
-            stop_loss_price = stop_loss_price_10
+            stop_loss_price = stop_loss_price_sma
+                
+
         
         # Berechnung des Take-Profit-Preises basierend auf dem gewählten Stop-Loss-Preis
         take_profit_price = purchase_price + 3 * (purchase_price - stop_loss_price)
