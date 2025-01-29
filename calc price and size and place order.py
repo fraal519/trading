@@ -93,7 +93,7 @@ def calculate_atr(high_prices, low_prices, close_prices, period=21):
     """
     tr_values = [max(high, low, previous_close) - min(low, previous_close) 
                              for high, low, previous_close in zip(high_prices[1:], low_prices[1:], close_prices[:-1])]
-                tr_values = [max(high, previous_close) - min(low, previous_close) 
+    tr_values = [max(high, previous_close) - min(low, previous_close) 
                              for high, low, previous_close in zip(high_prices[1:], low_prices[1:], close_prices[:-1])]
     tr_values.insert(0, high_prices[0] - low_prices[0])
     atr = np.mean(tr_values[-period:])
