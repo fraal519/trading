@@ -3,57 +3,47 @@ import pandas as pd
 
 def calculate_candle_ratios(ticker, n):
     """
-    Berechnet die Anzahl der grünen und roten Kerzen und das Verhältnis zueinander
+    Berechnet die Anzahl der grünen und roten Kerzen basierend auf dem Vortagesvergleich
     für die letzten n Handelstage eines gegebenen Aktientickersymbols.
 
     :param ticker: Das Aktientickersymbol als String
-    :param n: Die Anzahl der letzten Handelstage als Integer
+    :param n: Die Anzahl der zu berechnenden Kerzen
     :return: Ein Dictionary mit der Anzahl der grünen und roten Kerzen und dem Verhältnis
     """
-    # Umwandlung von Tagen in einen gültigen Zeitraum für yfinance
-    if n <= 5:
-        period = '1mo'
-    elif n <= 30:
-        period = '3mo'
-    elif n <= 90:
-        period = '6mo'
-    elif n <= 180:
-        period = '1y'
-    elif n <= 365:
-        period = '2y'
-    elif n <= 730:
-        period = '5y'
-    else:
-        period = '10y'
-    
-    # Laden der historischen Daten für den gegebenen Ticker
+    # Wir brauchen n+1 Tage, um n Kerzen zu berechnen
+    extra_days = n + 1  
+
+    # Zeitraum für yfinance bestimmen
+    period = '6mo' if n <= 90 else '1y'
+
+    # Historische Daten abrufen
     data = yf.download(ticker, period=period)
-    
-    # Überprüfen, ob Daten geladen wurden
+
+    # Prüfen, ob Daten vorhanden sind
     if data.empty:
-        raise ValueError(f"Keine Daten für Ticker {ticker} gefunden.")
-    
-    # Überprüfen, ob genügend Daten vorhanden sind
-    if len(data) < n:
-        raise ValueError(f"Nicht genügend Daten vorhanden. Nur {len(data)} Handelstage verfügbar.")
-    
-    # Auswahl der letzten n Handelstage
-    data = data.iloc[-n:]
-    
-    # Initialisieren der Zähler für grüne und rote Kerzen
+        raise ValueError(f"Keine Daten für {ticker} gefunden.")
+
+    # Sicherstellen, dass genügend Daten verfügbar sind
+    if len(data) < extra_days:
+        raise ValueError(f"Nicht genügend Daten: Nur {len(data)} statt {extra_days} verfügbar.")
+
+    # Die letzten n+1 Handelstage auswählen
+    data = data.iloc[-extra_days:]
+
+    # Berechnung der Kerzenfarbe anhand des Vortags
     green_candles = 0
     red_candles = 0
-    
-    # Durchlaufen der letzten n Tage und Zählen der grünen und roten Kerzen
-    for index, row in data.iterrows():
-        close_value = row['Close'].item()
-        open_value = row['Open'].item()
-        if close_value > open_value:
+
+    for i in range(1, len(data)):  # Start bei 1, weil wir den Vortag brauchen
+        current_close = data["Close"].iloc[i].item()  # Sicherstellen, dass der Wert ein Scalar ist
+        previous_close = data["Close"].iloc[i - 1].item()  # Sicherstellen, dass der Wert ein Scalar ist
+        
+        if current_close > previous_close:
             green_candles += 1
-        elif close_value < open_value:
+        elif current_close < previous_close:
             red_candles += 1
-    
-    # Berechnen des Verhältnisses
+
+    # Verhältnis berechnen
     if red_candles == 0:
         ratio = 1.0
         result_text = "Es gibt nur grüne Kerzen"
@@ -63,15 +53,13 @@ def calculate_candle_ratios(ticker, n):
     else:
         ratio = green_candles / red_candles
         result_text = ""
-    
-    # Rückgabe eines Dictionaries mit den Ergebnissen
+
     return {
         'green_candles': green_candles,
         'red_candles': red_candles,
         'ratio': ratio,
-        'result_text': result_text
     }
 
-# Beispielaufruf der Funktion
+# Beispielaufruf für 20 Kerzen
 result = calculate_candle_ratios('AAPL', 20)
 print(result)
