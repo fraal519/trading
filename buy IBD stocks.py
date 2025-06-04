@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """ IBAPI - Bracket Order mit Stop-Buy, Stop-Loss und Take-Profit
-@author: Frank Altmeyer
+@author: Dein Name
 """
 
 from ibapi.client import EClient
@@ -88,6 +88,7 @@ while app.nextValidOrderId is None:
     time.sleep(0.1)
 
 # User inputs for the bracket order
+symbol = input("Geben Sie das Aktiensymbol ein: ")
 stop_buy_price = float(input("Geben Sie den Kaufpreis (Stop-Buy Preis) ein: "))
 
 # Berechnung der Menge
@@ -109,7 +110,6 @@ print(f"Vorgeschlagener Stop-Loss Preis: ${stop_loss_price:.2f}")
 confirm = input("Möchten Sie die Order mit diesen Werten anlegen? (1 = Ja, 2 = Nein): ")
 if confirm == '1':
     # Create the contract
-    symbol = input("Geben Sie das Aktiensymbol ein: ")
     contract = usTechStk(symbol)
 
     # Get the next valid order ID
