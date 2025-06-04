@@ -138,4 +138,3 @@ else:
 
 # Disconnect the client
 app.disconnect()
-
