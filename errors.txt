@@ -1,12 +1,20 @@
-Traceback (most recent call last):
-  File "/Users/fraal/Downloads/Trading/trading-1/get Stock Info.py", line 2, in <module>
-    import pandas_ta as ta
-  File "/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/site-packages/pandas_ta/__init__.py", line 116, in <module>
-    from pandas_ta.core import *
-  File "/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/site-packages/pandas_ta/core.py", line 18, in <module>
-    from pandas_ta.momentum import *
-  File "/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/site-packages/pandas_ta/momentum/__init__.py", line 34, in <module>
-    from .squeeze_pro import squeeze_pro
-  File "/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/site-packages/pandas_ta/momentum/squeeze_pro.py", line 2, in <module>
-    from numpy import NaN as npNaN
-ImportError: cannot import name 'NaN' from 'numpy' (/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/site-packages/numpy/__init__.py). Did you mean: 'nan'?
+NextValidId: 56
+Error -1 2104 Market data farm connection is OK:usbond
+Error -1 2104 Market data farm connection is OK:usfarm.nj
+Error -1 2104 Market data farm connection is OK:usfuture
+Error -1 2104 Market data farm connection is OK:eufarm
+Error -1 2104 Market data farm connection is OK:usopt
+Error -1 2104 Market data farm connection is OK:usfarm
+Error -1 2106 HMDS data farm connection is OK:ushmds
+Error -1 2158 Sec-def data farm connection is OK:secdefil
+Geben Sie das Aktiensymbol ein: aapl
+Geben Sie den Kaufpreis (Stop-Buy Preis) ein: 220
+Vorgeschlagene Menge: 45
+Vorgeschlagener Take-Profit Preis: $264.00
+Vorgeschlagener Stop-Loss Preis: $204.60
+Möchten Sie die Order mit diesen Werten anlegen? (1 = Ja, 2 = Nein): 1
+Error 56 10268 The 'EtradeOnly' order attribute is not supported.
+Error 57 135 Can't find order with id = 56
+Error 58 135 Can't find order with id = 56
+Orders erfolgreich platziert.
+Position: Account: DU4662643, Symbol: AAPL, Position: 0.0, Avg Cost: 0.0
