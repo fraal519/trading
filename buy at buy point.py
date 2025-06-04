@@ -1,6 +1,8 @@
-import yfinance as yf
-import numpy as np
-import pandas as pd
+# -*- coding: utf-8 -*-
+""" IBAPI - Bracket Order mit Stop-Buy, Stop-Loss und Take-Profit
+@author: Dein Name
+"""
+
 from ibapi.client import EClient
 from ibapi.wrapper import EWrapper
 from ibapi.contract import Contract
@@ -13,6 +15,8 @@ class TradingApp(EWrapper, EClient):
     def __init__(self):
         EClient.__init__(self, self)
         self.nextValidOrderId = None
+        self.positions = []
+        self.openOrders = []
 
     def error(self, reqId, errorCode, errorString):
         print("Error {} {} {}".format(reqId, errorCode, errorString))
@@ -22,10 +26,19 @@ class TradingApp(EWrapper, EClient):
         self.nextValidOrderId = orderId
         print("NextValidId:", orderId)
 
+    def position(self, account, contract, position, avgCost):
+        self.positions.append((account, contract.symbol, position, avgCost))
+        print("Position: Account: {}, Symbol: {}, Position: {}, Avg Cost: {}".format(account, contract.symbol, position, avgCost))
+
+    def openOrder(self, orderId, contract, order, orderState):
+        self.openOrders.append((orderId, contract.symbol, order.action, order.totalQuantity, order.lmtPrice))
+        print("Open Order: OrderId: {}, Symbol: {}, Action: {}, Quantity: {}, Limit Price: {}".format(orderId, contract.symbol, order.action, order.totalQuantity, order.lmtPrice))
+
 def websocket_con(app):
     app.run()
 
 def usTechStk(symbol, sec_type="STK", currency="USD", exchange="SMART"):
+    """ Create a US stock contract for Interactive Brokers API. """
     contract = Contract()
     contract.symbol = symbol
     contract.secType = sec_type
@@ -33,84 +46,96 @@ def usTechStk(symbol, sec_type="STK", currency="USD", exchange="SMART"):
     contract.exchange = exchange
     return contract
 
-def create_order(orderId, action, quantity, order_type, price=None, oca_group=None):
-    order = Order()
-    order.orderId = orderId
-    order.action = action
-    order.orderType = order_type
-    order.totalQuantity = quantity
-    order.tif = "GTC"  # Set the order validity to Good Till Cancelled
-    if price is not None:
-        order.lmtPrice = round(price, 2)
-    if oca_group is not None:
-        order.ocaType = 1  # Set OCA type (1 = cancel all other orders in the group)
-        order.ocaGroup = oca_group  # Set the OCA group name
-    return order
+def bracketOrder(parentOrderId, action, quantity, limitPrice, takeProfitPrice, stopLossPrice):
+    parent = Order()
+    parent.orderId = parentOrderId
+    parent.action = action
+    parent.orderType = "STP"
+    parent.totalQuantity = quantity
+    parent.auxPrice = limitPrice
+    parent.transmit = False
 
-def main():
-    # Eingabe des Tickersymbols
-    ticker_symbol = input("Bitte geben Sie das Tickersymbol ein: ")
-    
-    # Eingabe des Stop-Buy-Kurses und des Limit-Kurses
-    stop_buy_price = float(input("Bitte geben Sie den Stop-Buy-Kurs ein: "))
-    limit_price = float(input("Bitte geben Sie den Limit-Kurs ein: "))
-    
-    # Berechnung der Anzahl der Aktien für eine Kauforder im Wert von 10.000 USD
-    investment_amount = 10000
-    number_of_shares = investment_amount // stop_buy_price
-    
-    # Berechnung des Stop-Loss-Preises (93% des Kaufkurses)
-    stop_loss_price = stop_buy_price * 0.93
-    
-    # Berechnung des Take-Profit-Preises (20% über dem Kaufkurs)
-    take_profit_price = stop_buy_price * 1.20
-    
-    print(f"Kaufpreis: ${stop_buy_price:.2f}")
-    print(f"Anzahl der Aktien: {int(number_of_shares)}")
-    print(f"Stop-Loss-Preis: ${stop_loss_price:.2f}")
-    print(f"Take-Profit-Preis: ${take_profit_price:.2f}")
+    takeProfit = Order()
+    takeProfit.orderId = parentOrderId + 1
+    takeProfit.action = "SELL" if action == "BUY" else "BUY"
+    takeProfit.orderType = "LMT"
+    takeProfit.totalQuantity = quantity
+    takeProfit.lmtPrice = takeProfitPrice
+    takeProfit.parentId = parentOrderId
+    takeProfit.transmit = False
 
-    # Verbindung zu Interactive Brokers herstellen
-    app = TradingApp()
-    app.connect("127.0.0.1", 4002, clientId=1)
+    stopLoss = Order()
+    stopLoss.orderId = parentOrderId + 2
+    stopLoss.action = "SELL" if action == "BUY" else "BUY"
+    stopLoss.orderType = "STP"
+    stopLoss.totalQuantity = quantity
+    stopLoss.auxPrice = stopLossPrice
+    stopLoss.parentId = parentOrderId
+    stopLoss.transmit = True
 
-    # Start a separate daemon thread to execute the websocket connection
-    con_thread = threading.Thread(target=websocket_con, args=(app,), daemon=True)
-    con_thread.start()
-    time.sleep(1)  # some latency added to ensure that the connection is established
+    return [parent, takeProfit, stopLoss]
 
-    # Wait for next valid order id
-    while app.nextValidOrderId is None:
-        time.sleep(0.1)
+app = TradingApp()
+app.connect("127.0.0.1", 4002, clientId=1)
 
+# Start a separate daemon thread to execute the websocket connection
+con_thread = threading.Thread(target=websocket_con, daemon=True)
+con_thread.start()
+time.sleep(1)  # some latency added to ensure that the connection is established
+
+# Wait for next valid order id
+while app.nextValidOrderId is None:
+    time.sleep(0.1)
+
+# User inputs for the bracket order
+stop_buy_price = float(input("Geben Sie den Kaufpreis (Stop-Buy Preis) ein: "))
+
+# Berechnung der Menge
+investment_amount = 10000
+quantity = int(investment_amount // stop_buy_price)
+
+# Berechnung des Take-Profit-Preises (20% über dem Kaufkurs)
+take_profit_price = stop_buy_price * 1.20
+
+# Berechnung des Stop-Loss-Preises (7% unter dem Kaufkurs)
+stop_loss_price = stop_buy_price * 0.93
+
+# Vorschläge ausgeben
+print(f"Vorgeschlagene Menge: {quantity}")
+print(f"Vorgeschlagener Take-Profit Preis: ${take_profit_price:.2f}")
+print(f"Vorgeschlagener Stop-Loss Preis: ${stop_loss_price:.2f}")
+
+# Bestätigung der Order
+confirm = input("Möchten Sie die Order mit diesen Werten anlegen? (1 = Ja, 2 = Nein): ")
+if confirm == '1':
     # Create the contract
-    contract = usTechStk(ticker_symbol)
+    symbol = input("Geben Sie das Aktiensymbol ein: ")
+    contract = usTechStk(symbol)
 
     # Get the next valid order ID
     parentOrderId = app.nextValidOrderId
 
-    # Create the Stop-Buy Order
-    stop_buy_order = create_order(parentOrderId, "BUY", int(number_of_shares), "STP", stop_buy_price)
-    app.placeOrder(stop_buy_order.orderId, contract, stop_buy_order)
-    app.nextValidOrderId += 1
+    # Create the bracket order
+    bracket = bracketOrder(parentOrderId, "BUY", quantity, stop_buy_price, take_profit_price, stop_loss_price)
 
-    # OCA Group Name
-    oca_group = f"OCA_{parentOrderId}"
-
-    # Create the Stop-Loss Order
-    stop_loss_order = create_order(app.nextValidOrderId, "SELL", int(number_of_shares), "STP", stop_loss_price, oca_group)
-    app.placeOrder(stop_loss_order.orderId, contract, stop_loss_order)
-    app.nextValidOrderId += 1
-
-    # Create the Take-Profit Order
-    take_profit_order = create_order(app.nextValidOrderId, "SELL", int(number_of_shares), "LMT", take_profit_price, oca_group)
-    app.placeOrder(take_profit_order.orderId, contract, take_profit_order)
-    app.nextValidOrderId += 1
+    # Place the bracket order
+    for order in bracket:
+        app.placeOrder(order.orderId, contract, order)
+        time.sleep(1)  # some latency added to ensure that the order is placed
 
     print("Orders erfolgreich platziert.")
-    
-    # Disconnect the client
-    app.disconnect()
 
-if __name__ == "__main__":
-    main()
+    # Requesting account positions
+    app.reqPositions()
+    time.sleep(5)  # some latency added to ensure that the positions are retrieved
+
+    # Requesting open orders
+    app.reqOpenOrders()
+    time.sleep(5)  # some latency added to ensure that the open orders are retrieved
+
+else:
+    print("Order wurde nicht platziert.")
+
+# Disconnect the client
+app.disconnect()
+
