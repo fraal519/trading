@@ -34,7 +34,7 @@ class TradingApp(EWrapper, EClient):
         self.openOrders.append((orderId, contract.symbol, order.action, order.totalQuantity, order.lmtPrice))
         print("Open Order: OrderId: {}, Symbol: {}, Action: {}, Quantity: {}, Limit Price: {}".format(orderId, contract.symbol, order.action, order.totalQuantity, order.lmtPrice))
 
-def websocket_con(app):
+def websocket_con():
     app.run()
 
 def usTechStk(symbol, sec_type="STK", currency="USD", exchange="SMART"):
