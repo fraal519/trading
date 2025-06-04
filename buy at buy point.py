@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """ IBAPI - Bracket Order mit Stop-Buy, Stop-Loss und Take-Profit
-@author: Dein Name
+@author: Frank Altmeyer
 """
 
 from ibapi.client import EClient
